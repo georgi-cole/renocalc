@@ -173,12 +173,29 @@
   <!-- Scripts – load order matters; each file depends on those above it -->
   <script src="assets/js/config.js"></script>
   <script src="assets/js/utils.js"></script>
+
+  <!-- Supabase JS client (UMD build – exposes window.supabase) -->
+  <!-- Only used when SUPABASE_URL + SUPABASE_ANON_KEY are set in config.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+
+  <!-- Initialise ICO.SupabaseClient (null when credentials absent) -->
+  <script src="assets/js/services/supabaseClient.js"></script>
+
+  <!-- Local (localStorage) service implementations – always loaded as fallback -->
   <script src="assets/js/services/storage.js"></script>
   <script src="assets/js/services/auditService.js"></script>
   <script src="assets/js/services/authService.js"></script>
   <script src="assets/js/services/activityService.js"></script>
   <script src="assets/js/services/paymentService.js"></script>
   <script src="assets/js/services/reportService.js"></script>
+
+  <!-- Supabase service overrides – each replaces its ICO.* counterpart only
+       when ICO.SupabaseClient is non-null.  Load order: audit → auth →
+       activity so that higher-level services call the correct audit impl. -->
+  <script src="assets/js/services/supabaseAuditService.js"></script>
+  <script src="assets/js/services/supabaseAuthService.js"></script>
+  <script src="assets/js/services/supabaseActivityService.js"></script>
+
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
