@@ -69,9 +69,9 @@ migrations/
 
 ### How the fallback works
 
-1. Local service files are always loaded first, registering `ICO.AuditService`, `ICO.AuthService`, and `ICO.ActivityService` on the global `ICO` namespace.
-2. `supabaseClient.js` then runs and sets `ICO.SupabaseClient` – either a live Supabase client (when credentials are present) or `null`.
-3. The three `supabase*Service.js` files each check `if (!ICO.SupabaseClient) { return; }` at the top.  When Supabase is active they replace the corresponding `ICO.*` namespace with a cloud-backed implementation that maintains an in-memory cache for synchronous reads and flushes mutations to Supabase asynchronously.
+1. `supabaseClient.js` is loaded first and sets `ICO.SupabaseClient` – either a live Supabase client (when credentials are present) or `null`.
+2. The local service files are then loaded, registering the default, local-first implementations on the global `ICO` namespace (e.g. `ICO.StorageService`, `ICO.AuditService`, `ICO.AuthService`, `ICO.ActivityService`, `ICO.PaymentService`, `ICO.ReportService`).
+3. Finally, the `supabase*Service.js` files each check `if (!ICO.SupabaseClient) { return; }` at the top. When Supabase is active they replace the corresponding `ICO.*` namespace with a cloud-backed implementation that maintains an in-memory cache for synchronous reads and flushes mutations to Supabase asynchronously.
 
 ### Backward compatibility
 
