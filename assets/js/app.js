@@ -7,6 +7,8 @@
   var DB  = ICO.DB;
   var fmt = ICO.fmt;
 
+  var APP_VERSION = '2.0.0';
+
   /* ── State ────────────────────────────────────────────────── */
   var state = {
     currentUser: null,
@@ -262,13 +264,14 @@
       activities: 'Activities',
       payments: 'Payments',
       reports: 'Reports',
-      auditlog: 'Audit Log'
+      auditlog: 'Audit Log',
+      settings: 'Settings'
     };
     var titleEl = document.getElementById('topbar-title');
     if (titleEl) titleEl.textContent = titles[page] || page;
 
     // render page
-    var pages = { dashboard: renderDashboard, activities: renderActivities, payments: renderPayments, reports: renderReports, auditlog: renderAuditLog };
+    var pages = { dashboard: renderDashboard, activities: renderActivities, payments: renderPayments, reports: renderReports, auditlog: renderAuditLog, settings: renderSettings };
     var main = document.getElementById('main-page');
     if (main && pages[page]) {
       main.innerHTML = '';
@@ -820,45 +823,33 @@
   }
 
   /* ── REPORTS ─────────────────────────────────────────────── */
+  var reportFilter = { dateFrom: '', dateTo: '', category: '', payer: '', method: '', status: '', activityId: '', search: '' };
+
+  function getFilteredReportPayments() {
+    return DB.getPayments().filter(function (p) {
+      if (reportFilter.dateFrom && p.date < reportFilter.dateFrom) return false;
+      if (reportFilter.dateTo   && p.date > reportFilter.dateTo)   return false;
+      if (reportFilter.category) {
+        var act = p.activityId ? DB.getActivityById(p.activityId) : null;
+        if (!act || act.category !== reportFilter.category) return false;
+      }
+      if (reportFilter.payer    && p.paidBy     !== reportFilter.payer)    return false;
+      if (reportFilter.method   && p.method     !== reportFilter.method)   return false;
+      if (reportFilter.status   && p.status     !== reportFilter.status)   return false;
+      if (reportFilter.activityId && p.activityId !== reportFilter.activityId) return false;
+      if (reportFilter.search) {
+        var haystack = (getActivityTitle(p.activityId) + ' ' + (p.reference || '') + ' ' + getProfileName(p.paidBy) + ' ' + (p.notes || '')).toLowerCase();
+        if (!haystack.includes(reportFilter.search.toLowerCase())) return false;
+      }
+      return true;
+    }).sort(function (a, b) { return b.date.localeCompare(a.date); });
+  }
+
   function renderReports(container) {
     var acts  = DB.getActivities();
-    var pays  = DB.getPayments();
     var profs = DB.getProfiles();
-    var sum   = DB.getSummary();
+    var categories = ['Demolition','Electrical','Plumbing','Tiling','Flooring','Plastering','Painting','Roofing','Windows','Doors','Insulation','Other'];
 
-    // Payment by person
-    var byPerson = {};
-    profs.forEach(function (p) { byPerson[p.id] = { name: p.name, paid: 0, count: 0 }; });
-    pays.forEach(function (p) {
-      if (!byPerson[p.paidBy]) byPerson[p.paidBy] = { name: getProfileName(p.paidBy), paid: 0, count: 0 };
-      byPerson[p.paidBy].paid += Number(p.amount);
-      byPerson[p.paidBy].count++;
-    });
-    var personEntries = Object.values(byPerson).sort(function (a, b) { return b.paid - a.paid; });
-
-    // Payment by category (linked activity)
-    var byCat = {};
-    pays.forEach(function (p) {
-      var cat = p.activityId ? ((DB.getActivityById(p.activityId)||{}).category || 'Uncategorised') : 'Uncategorised';
-      if (!byCat[cat]) byCat[cat] = 0;
-      byCat[cat] += Number(p.amount);
-    });
-    var catEntries = Object.entries(byCat).sort(function (a, b) { return b[1] - a[1]; });
-    var maxCat = catEntries.length ? catEntries[0][1] : 1;
-
-    // Activities by status
-    var actByStatus = { pending: 0, in_progress: 0, completed: 0, cancelled: 0 };
-    acts.forEach(function (a) { actByStatus[a.status] = (actByStatus[a.status] || 0) + 1; });
-
-    // Payment by method
-    var byMethod = {};
-    pays.forEach(function (p) {
-      if (!byMethod[p.method]) byMethod[p.method] = 0;
-      byMethod[p.method] += Number(p.amount);
-    });
-    var methodEntries = Object.entries(byMethod).sort(function (a, b) { return b[1] - a[1]; });
-
-    /* Filter controls */
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
@@ -868,89 +859,158 @@
           '</div>' +
         '</div>' +
 
-        /* Top summary */
+        /* Filter bar */
+        '<div class="filter-bar filter-bar-wrap">' +
+          '<div class="search-wrap">' +
+            '<span class="search-icon">🔍</span>' +
+            '<input type="search" id="rep-search" placeholder="Search payments…" value="' + escHtml(reportFilter.search) + '">' +
+          '</div>' +
+          '<input type="date" id="rep-date-from" class="filter-date" title="From date" value="' + escHtml(reportFilter.dateFrom) + '">' +
+          '<input type="date" id="rep-date-to"   class="filter-date" title="To date"   value="' + escHtml(reportFilter.dateTo) + '">' +
+          '<select id="rep-cat-filter">' +
+            '<option value="">All Categories</option>' +
+            categories.map(function(c){ return '<option value="'+escHtml(c)+'"'+(reportFilter.category===c?' selected':'')+'>'+escHtml(c)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="rep-payer-filter">' +
+            '<option value="">All Payers</option>' +
+            profs.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(reportFilter.payer===p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="rep-method-filter">' +
+            '<option value="">All Methods</option>' +
+            ['bank_transfer','cash','card','cheque','other']
+              .map(function(m){ return '<option value="'+m+'"'+(reportFilter.method===m?' selected':'')+'>'+methodLabel(m)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="rep-status-filter">' +
+            '<option value="">All Statuses</option>' +
+            '<option value="paid"'+(reportFilter.status==='paid'?' selected':'')+'>Paid</option>' +
+            '<option value="pending"'+(reportFilter.status==='pending'?' selected':'')+'>Pending</option>' +
+            '<option value="partial"'+(reportFilter.status==='partial'?' selected':'')+'>Partial</option>' +
+            '<option value="overdue"'+(reportFilter.status==='overdue'?' selected':'')+'>Overdue</option>' +
+          '</select>' +
+          '<select id="rep-act-filter">' +
+            '<option value="">All Activities</option>' +
+            acts.map(function(a){ return '<option value="'+escHtml(a.id)+'"'+(reportFilter.activityId===a.id?' selected':'')+'>'+escHtml(a.title)+'</option>'; }).join('') +
+          '</select>' +
+          '<button class="btn btn-ghost btn-sm" id="rep-reset-filters">Reset</button>' +
+        '</div>' +
+
+        '<div id="report-content"></div>' +
+      '</div>';
+
+    function rebuildReportContent() {
+      var pays = getFilteredReportPayments();
+      var totalSpent     = pays.filter(function(p){ return p.status === 'paid'; }).reduce(function(s,p){ return s + Number(p.amount); }, 0);
+      var totalRemaining = pays.reduce(function(s,p){ return s + Number(p.remaining||0); }, 0);
+      var totalPending   = pays.filter(function(p){ return p.status === 'pending'; }).reduce(function(s,p){ return s + Number(p.amount); }, 0);
+
+      // Spend by payer (filtered)
+      var byPayer = {};
+      var allProfs = DB.getProfiles();
+      allProfs.forEach(function(p){ byPayer[p.id] = { name: p.name, paid: 0, count: 0 }; });
+      pays.forEach(function(p) {
+        if (!byPayer[p.paidBy]) byPayer[p.paidBy] = { name: getProfileName(p.paidBy), paid: 0, count: 0 };
+        byPayer[p.paidBy].paid  += Number(p.amount);
+        byPayer[p.paidBy].count++;
+      });
+      var payerEntries = Object.values(byPayer).filter(function(e){ return e.count > 0; }).sort(function(a,b){ return b.paid-a.paid; });
+      var totalAll = pays.reduce(function(s,p){ return s+Number(p.amount); }, 0);
+
+      // Spend by category (filtered)
+      var byCat = {};
+      pays.forEach(function(p){
+        var cat = p.activityId ? ((DB.getActivityById(p.activityId)||{}).category || 'Uncategorised') : 'Uncategorised';
+        if (!byCat[cat]) byCat[cat] = 0;
+        byCat[cat] += Number(p.amount);
+      });
+      var catEntries = Object.entries(byCat).sort(function(a,b){ return b[1]-a[1]; });
+      var maxCat = catEntries.length ? catEntries[0][1] : 1;
+
+      // Payment by method (filtered)
+      var byMethod = {};
+      pays.forEach(function(p){
+        if (!byMethod[p.method]) byMethod[p.method] = 0;
+        byMethod[p.method] += Number(p.amount);
+      });
+      var methodEntries = Object.entries(byMethod).sort(function(a,b){ return b[1]-a[1]; });
+
+      // Group payments by date
+      var grouped = {};
+      pays.forEach(function(p){
+        if (!grouped[p.date]) grouped[p.date] = [];
+        grouped[p.date].push(p);
+      });
+      var groupedDates = Object.keys(grouped).sort(function(a,b){ return b.localeCompare(a); });
+
+      var content = document.getElementById('report-content');
+      if (!content) return;
+
+      content.innerHTML =
+        /* Summary cards */
         '<div class="report-summary-grid">' +
           '<div class="stat-card">' +
             '<div class="stat-label">Total Spent</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(sum.totalSpent)) + '</div>' +
+            '<div class="stat-value">' + escHtml(fmt.currency(totalSpent)) + '</div>' +
+            '<div class="stat-sub">' + pays.filter(function(p){ return p.status==='paid'; }).length + ' paid payments</div>' +
           '</div>' +
           '<div class="stat-card danger">' +
             '<div class="stat-label">Total Remaining</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(sum.totalRemaining)) + '</div>' +
+            '<div class="stat-value">' + escHtml(fmt.currency(totalRemaining)) + '</div>' +
+            '<div class="stat-sub">Outstanding balance</div>' +
           '</div>' +
           '<div class="stat-card accent">' +
-            '<div class="stat-label">Pending Payments</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(sum.totalPending)) + '</div>' +
+            '<div class="stat-label">Pending Amount</div>' +
+            '<div class="stat-value">' + escHtml(fmt.currency(totalPending)) + '</div>' +
+            '<div class="stat-sub">Awaiting settlement</div>' +
           '</div>' +
-          '<div class="stat-card success">' +
-            '<div class="stat-label">Activities Complete</div>' +
-            '<div class="stat-value">' + sum.completedCount + ' / ' + sum.activitiesCount + '</div>' +
+          '<div class="stat-card">' +
+            '<div class="stat-label">Matched Records</div>' +
+            '<div class="stat-value">' + pays.length + '</div>' +
+            '<div class="stat-sub">of ' + DB.getPayments().length + ' total payments</div>' +
           '</div>' +
         '</div>' +
 
-        '<div class="grid-2">' +
-          /* Spend by person */
+        (pays.length === 0 ? '<div class="empty-state"><div class="empty-icon">📊</div><h3>No payments match your filters</h3><p>Try adjusting or resetting the filters.</p></div>' :
+
+        /* Breakdowns */
+        '<div class="grid-2 mb-3">' +
           '<div class="card">' +
-            '<div class="card-header"><h2>Spend by Person</h2></div>' +
+            '<div class="card-header"><h2>Spend by Payer</h2></div>' +
             '<div class="card-body">' +
-              (personEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                personEntries.map(function (pe) {
-                  var pct = sum.totalSpent > 0 ? Math.round(pe.paid / sum.totalSpent * 100) : 0;
+              (payerEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
+                payerEntries.map(function(pe){
+                  var pct = totalAll > 0 ? Math.round(pe.paid/totalAll*100) : 0;
                   return '<div class="report-bar-wrap">' +
                     '<div class="report-row" style="padding:.2rem 0">' +
                       '<span class="label">' + escHtml(pe.name) + '</span>' +
                       '<span class="value">' + escHtml(fmt.currency(pe.paid)) + ' <small class="text-muted">(' + pct + '%)</small></span>' +
                     '</div>' +
-                    '<div class="report-bar-outer"><div class="report-bar-inner" style="width:' + pct + '%"></div></div>' +
+                    '<div class="report-bar-outer"><div class="report-bar-inner" style="width:'+pct+'%"></div></div>' +
                   '</div>';
                 }).join('')) +
             '</div>' +
           '</div>' +
-
-          /* Spend by category */
           '<div class="card">' +
             '<div class="card-header"><h2>Spend by Category</h2></div>' +
             '<div class="card-body">' +
               (catEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                catEntries.map(function (ce) {
-                  var pct = Math.round(ce[1] / maxCat * 100);
+                catEntries.map(function(ce){
+                  var pct = Math.round(ce[1]/maxCat*100);
                   return '<div class="report-bar-wrap">' +
                     '<div class="report-row" style="padding:.2rem 0">' +
                       '<span class="label">' + escHtml(ce[0]) + '</span>' +
                       '<span class="value">' + escHtml(fmt.currency(ce[1])) + '</span>' +
                     '</div>' +
-                    '<div class="report-bar-outer"><div class="report-bar-inner accent" style="width:' + pct + '%"></div></div>' +
+                    '<div class="report-bar-outer"><div class="report-bar-inner accent" style="width:'+pct+'%"></div></div>' +
                   '</div>';
                 }).join('')) +
             '</div>' +
           '</div>' +
-
-          /* Activities by status */
-          '<div class="card">' +
-            '<div class="card-header"><h2>Activities by Status</h2></div>' +
-            '<div class="card-body">' +
-              Object.entries(actByStatus).map(function (e) {
-                var pct = acts.length > 0 ? Math.round(e[1] / acts.length * 100) : 0;
-                var colorMap = { completed: 'success', in_progress: '', pending: 'accent', cancelled: 'danger' };
-                return '<div class="report-bar-wrap">' +
-                  '<div class="report-row" style="padding:.2rem 0">' +
-                    '<span class="label">' + statusBadge(e[0]) + '</span>' +
-                    '<span class="value">' + e[1] + ' <small class="text-muted">(' + pct + '%)</small></span>' +
-                  '</div>' +
-                  '<div class="report-bar-outer"><div class="report-bar-inner ' + (colorMap[e[0]]||'') + '" style="width:' + pct + '%"></div></div>' +
-                '</div>';
-              }).join('') +
-            '</div>' +
-          '</div>' +
-
-          /* Payment by method */
           '<div class="card">' +
             '<div class="card-header"><h2>Payment Methods</h2></div>' +
             '<div class="card-body">' +
               (methodEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                methodEntries.map(function (me) {
-                  var tot = pays.reduce(function (s, p) { return s + Number(p.amount); }, 0);
-                  var pct = tot > 0 ? Math.round(me[1] / tot * 100) : 0;
+                methodEntries.map(function(me){
+                  var pct = totalAll > 0 ? Math.round(me[1]/totalAll*100) : 0;
                   return '<div class="report-row">' +
                     '<span class="label">' + escHtml(methodLabel(me[0])) + '</span>' +
                     '<span class="value">' + escHtml(fmt.currency(me[1])) + ' <small class="text-muted">(' + pct + '%)</small></span>' +
@@ -960,43 +1020,134 @@
           '</div>' +
         '</div>' +
 
-        /* Payment detail table */
-        '<div class="card mt-3">' +
-          '<div class="card-header"><h2>All Payments Detail</h2></div>' +
-          '<div class="data-table-wrap">' +
-            '<table class="data-table">' +
-              '<thead><tr><th>Date</th><th>Amount</th><th>Paid By</th><th>Method</th><th>Activity</th><th>Status</th></tr></thead>' +
-              '<tbody>' +
-                pays.sort(function (a, b) { return b.date.localeCompare(a.date); })
-                    .map(function (p) {
-                      return '<tr>' +
-                        '<td>' + escHtml(fmt.date(p.date)) + '</td>' +
-                        '<td><strong>' + escHtml(fmt.currency(p.amount)) + '</strong></td>' +
-                        '<td>' + escHtml(getProfileName(p.paidBy)) + '</td>' +
-                        '<td>' + escHtml(methodLabel(p.method)) + '</td>' +
-                        '<td>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '—') + '</td>' +
-                        '<td>' + statusBadge(p.status) + '</td>' +
-                      '</tr>';
-                    }).join('') +
-              '</tbody>' +
-            '</table>' +
-          '</div>' +
+        /* Grouped by date */
+        '<div class="card mb-3">' +
+          '<div class="card-header"><h2>Payments by Date</h2></div>' +
+          groupedDates.map(function(date){
+            var group = grouped[date];
+            var groupTotal = group.reduce(function(s,p){ return s+Number(p.amount); }, 0);
+            return '<div class="report-date-group">' +
+              '<div class="report-date-header">' +
+                '<span>' + escHtml(fmt.date(date)) + '</span>' +
+                '<span class="report-date-total">' + escHtml(fmt.currency(groupTotal)) + '</span>' +
+              '</div>' +
+              '<div class="data-table-wrap"><table class="data-table">' +
+                '<tbody>' +
+                group.map(function(p){
+                  return '<tr class="report-detail-row" data-pay-id="' + escHtml(p.id) + '">' +
+                    '<td><strong>' + escHtml(fmt.currency(p.amount)) + '</strong>' + (p.remaining > 0 ? '<br><small class="text-danger">Rem: '+escHtml(fmt.currency(p.remaining))+'</small>' : '') + '</td>' +
+                    '<td>' + escHtml(getProfileName(p.paidBy)) + '</td>' +
+                    '<td><span class="badge badge-default">' + escHtml(methodLabel(p.method)) + '</span></td>' +
+                    '<td>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '<span class="text-muted">—</span>') + '</td>' +
+                    '<td>' + (p.reference ? escHtml(p.reference) : '<span class="text-muted">—</span>') + '</td>' +
+                    '<td>' + statusBadge(p.status) + '</td>' +
+                    '<td class="actions-col"><button class="btn btn-outline btn-sm" data-report-detail="' + escHtml(p.id) + '">Details</button></td>' +
+                  '</tr>';
+                }).join('') +
+                '</tbody></table></div>' +
+            '</div>';
+          }).join('') +
+        '</div>');
+
+      /* Drill-down detail modal */
+      content.querySelectorAll('[data-report-detail]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var payId = btn.getAttribute('data-report-detail');
+          var p = DB.getPaymentById(payId);
+          if (!p) return;
+          openPaymentDetailModal(p);
+        });
+      });
+    }
+
+    rebuildReportContent();
+
+    /* Wire up filters */
+    var filterIds = ['rep-search','rep-date-from','rep-date-to','rep-cat-filter','rep-payer-filter','rep-method-filter','rep-status-filter','rep-act-filter'];
+    var filterKeys = ['search','dateFrom','dateTo','category','payer','method','status','activityId'];
+    filterIds.forEach(function(fid, i) {
+      var el = container.querySelector('#' + fid);
+      if (!el) return;
+      el.addEventListener('input', function(e) { reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
+      el.addEventListener('change', function(e) { reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
+    });
+    container.querySelector('#rep-reset-filters').addEventListener('click', function() {
+      reportFilter = { dateFrom:'', dateTo:'', category:'', payer:'', method:'', status:'', activityId:'', search:'' };
+      navigate('reports');
+    });
+    container.querySelector('#btn-print').addEventListener('click', function() { window.print(); });
+  }
+
+  function openPaymentDetailModal(p) {
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="Payment Details">' +
+        '<div class="modal-header">' +
+          '<h2>Payment Details</h2>' +
+          '<button class="btn btn-ghost btn-icon" id="detail-close" aria-label="Close">✕</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+          '<dl class="detail-grid">' +
+            '<dt>Amount</dt><dd><strong>' + escHtml(fmt.currency(p.amount)) + '</strong></dd>' +
+            '<dt>Date</dt><dd>' + escHtml(fmt.date(p.date)) + '</dd>' +
+            '<dt>Status</dt><dd>' + statusBadge(p.status) + '</dd>' +
+            '<dt>Paid By</dt><dd>' + escHtml(getProfileName(p.paidBy)) + '</dd>' +
+            '<dt>Method</dt><dd>' + escHtml(methodLabel(p.method)) + '</dd>' +
+            '<dt>Activity</dt><dd>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '<span class="text-muted">—</span>') + '</dd>' +
+            '<dt>Reference</dt><dd>' + (p.reference ? escHtml(p.reference) : '<span class="text-muted">—</span>') + '</dd>' +
+            '<dt>Remaining</dt><dd>' + escHtml(fmt.currency(p.remaining||0)) + '</dd>' +
+            (p.notes ? '<dt>Notes</dt><dd>' + escHtml(p.notes) + '</dd>' : '') +
+            '<dt>Created</dt><dd>' + escHtml(fmt.datetime(p.createdAt)) + '</dd>' +
+            '<dt>Updated</dt><dd>' + escHtml(fmt.datetime(p.updatedAt)) + '</dd>' +
+          '</dl>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+          '<button class="btn btn-ghost" id="detail-done">Close</button>' +
         '</div>' +
       '</div>';
-
-    container.querySelector('#btn-print').addEventListener('click', function () { window.print(); });
+    document.body.appendChild(overlay);
+    function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+    overlay.querySelector('#detail-close').addEventListener('click', close);
+    overlay.querySelector('#detail-done').addEventListener('click', close);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
   }
 
   /* ── AUDIT LOG ───────────────────────────────────────────── */
+  var auditFilter = { dateFrom: '', dateTo: '', userId: '', action: '', entity: '' };
+
   function renderAuditLog(container) {
+    var profs = DB.getProfiles();
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Audit Log</h1><p>Complete history of all changes in this session</p></div>' +
+          '<div><h1>Audit Log</h1><p>Complete history of all changes</p></div>' +
           '<div class="page-actions">' +
             '<button class="btn btn-danger btn-sm" id="btn-clear-log">Clear Log</button>' +
           '</div>' +
         '</div>' +
+
+        /* Filter bar */
+        '<div class="filter-bar">' +
+          '<input type="date" id="aud-date-from" class="filter-date" title="From date" value="' + escHtml(auditFilter.dateFrom) + '">' +
+          '<input type="date" id="aud-date-to"   class="filter-date" title="To date"   value="' + escHtml(auditFilter.dateTo) + '">' +
+          '<select id="aud-user-filter">' +
+            '<option value="">All Users</option>' +
+            profs.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(auditFilter.userId===p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="aud-action-filter">' +
+            '<option value="">All Actions</option>' +
+            ['create','update','delete','login','logout']
+              .map(function(a){ return '<option value="'+a+'"'+(auditFilter.action===a?' selected':'')+'>'+a.charAt(0).toUpperCase()+a.slice(1)+'</option>'; }).join('') +
+          '</select>' +
+          '<select id="aud-entity-filter">' +
+            '<option value="">All Entities</option>' +
+            ['Activity','Payment','Profile']
+              .map(function(e){ return '<option value="'+e+'"'+(auditFilter.entity===e?' selected':'')+'>'+e+'</option>'; }).join('') +
+          '</select>' +
+          '<button class="btn btn-ghost btn-sm" id="aud-reset-filters">Reset</button>' +
+        '</div>' +
+
         '<div id="audit-log-content"></div>' +
       '</div>';
 
@@ -1009,16 +1160,39 @@
         toast('Audit log cleared', 'warning');
       }
     });
+
+    ['aud-date-from','aud-date-to','aud-user-filter','aud-action-filter','aud-entity-filter'].forEach(function(fid) {
+      var filterKeyMap = { 'aud-date-from':'dateFrom','aud-date-to':'dateTo','aud-user-filter':'userId','aud-action-filter':'action','aud-entity-filter':'entity' };
+      var el = container.querySelector('#' + fid);
+      if (!el) return;
+      el.addEventListener('change', function(e) {
+        auditFilter[filterKeyMap[fid]] = e.target.value;
+        renderAuditLogContent(container.querySelector('#audit-log-content'));
+      });
+    });
+    container.querySelector('#aud-reset-filters').addEventListener('click', function() {
+      auditFilter = { dateFrom:'', dateTo:'', userId:'', action:'', entity:'' };
+      navigate('auditlog');
+    });
   }
 
   function renderAuditLogContent(container) {
-    var log = DB.getAuditLog();
+    var log = DB.getAuditLog().filter(function(entry) {
+      var entryDate = entry.ts.slice(0, 10);
+      if (auditFilter.dateFrom && entryDate < auditFilter.dateFrom) return false;
+      if (auditFilter.dateTo   && entryDate > auditFilter.dateTo)   return false;
+      if (auditFilter.userId   && entry.userId !== auditFilter.userId)   return false;
+      if (auditFilter.action   && entry.action  !== auditFilter.action)  return false;
+      if (auditFilter.entity   && entry.entity  !== auditFilter.entity)  return false;
+      return true;
+    });
+
     if (!log.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📜</div><h3>No audit entries yet</h3><p>Actions like creating or editing records will appear here.</p></div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📜</div><h3>No audit entries found</h3><p>Actions like creating or editing records will appear here.</p></div>';
       return;
     }
 
-    var actionIcons = { create: '✨', update: '✏️', delete: '🗑️', login: '🔑', logout: '🚪' };
+    var actionIcons  = { create: '✨', update: '✏️', delete: '🗑️', login: '🔑', logout: '🚪' };
     var actionColors = { create: 'success', update: '', delete: 'danger', login: 'primary', logout: '' };
 
     container.innerHTML =
@@ -1027,6 +1201,7 @@
           '<div class="audit-log">' +
             log.map(function (entry) {
               var icon = actionIcons[entry.action] || 'ℹ️';
+              var hasSnapshots = entry.prevSnapshot || entry.newSnapshot;
               return '<div class="audit-entry">' +
                 '<div class="audit-icon">' + icon + '</div>' +
                 '<div class="audit-body">' +
@@ -1036,12 +1211,208 @@
                   '</div>' +
                   '<div class="audit-detail">' + escHtml(entry.detail) + (entry.userId ? ' · by ' + escHtml(getProfileName(entry.userId)) : '') + '</div>' +
                 '</div>' +
-                '<div class="audit-time">' + escHtml(fmt.datetime(entry.ts)) + '</div>' +
+                '<div class="audit-time">' +
+                  escHtml(fmt.datetime(entry.ts)) +
+                  (hasSnapshots ? '<br><button class="btn btn-ghost btn-sm audit-detail-btn" data-audit-id="' + escHtml(entry.id) + '" style="margin-top:.3rem;font-size:.75rem">View Changes</button>' : '') +
+                '</div>' +
               '</div>';
             }).join('') +
           '</div>' +
         '</div>' +
       '</div>';
+
+    container.querySelectorAll('.audit-detail-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var entryId = btn.getAttribute('data-audit-id');
+        var entry = DB.getAuditLog().find(function(e){ return e.id === entryId; });
+        if (entry) openAuditDetailModal(entry);
+      });
+    });
+  }
+
+  function openAuditDetailModal(entry) {
+    function snapshotToHtml(snapshot) {
+      if (!snapshot) return '<em class="text-muted">—</em>';
+      var keys = Object.keys(snapshot);
+      return '<dl class="detail-grid">' +
+        keys.map(function(k) {
+          var v = snapshot[k];
+          if (v === null || v === undefined || v === '') return '';
+          return '<dt>' + escHtml(k) + '</dt><dd>' + escHtml(String(v)) + '</dd>';
+        }).filter(Boolean).join('') +
+        '</dl>';
+    }
+
+    function diffHtml(prev, next) {
+      if (!prev || !next) return '';
+      var keys = Object.keys(Object.assign({}, prev, next));
+      var diffs = keys.filter(function(k) { return String(prev[k]||'') !== String(next[k]||''); });
+      if (!diffs.length) return '<p class="text-muted" style="font-size:.85rem">No field differences detected.</p>';
+      return '<table class="data-table" style="font-size:.83rem"><thead><tr><th>Field</th><th>Before</th><th>After</th></tr></thead><tbody>' +
+        diffs.map(function(k){
+          return '<tr>' +
+            '<td><strong>' + escHtml(k) + '</strong></td>' +
+            '<td class="text-danger">' + escHtml(String(prev[k]||'—')) + '</td>' +
+            '<td class="text-success">' + escHtml(String(next[k]||'—')) + '</td>' +
+          '</tr>';
+        }).join('') +
+      '</tbody></table>';
+    }
+
+    var hasBoth = entry.prevSnapshot && entry.newSnapshot;
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="Audit Entry Details">' +
+        '<div class="modal-header">' +
+          '<h2>Change Details</h2>' +
+          '<button class="btn btn-ghost btn-icon" id="aud-detail-close" aria-label="Close">✕</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+          '<div class="audit-meta-row">' +
+            '<span class="badge badge-' + ({'create':'success','update':'','delete':'danger','login':'primary','logout':''}[entry.action]||'default') + '">' + escHtml(entry.action.toUpperCase()) + '</span>' +
+            '<strong>' + escHtml(entry.entity) + ': ' + escHtml(entry.entityName || entry.entityId) + '</strong>' +
+            '<span class="text-muted" style="font-size:.82rem">' + escHtml(fmt.datetime(entry.ts)) + '</span>' +
+          '</div>' +
+          '<p style="font-size:.88rem;margin:.75rem 0 1rem;">' + escHtml(entry.detail) + (entry.userId ? ' · <em>by ' + escHtml(getProfileName(entry.userId)) + '</em>' : '') + '</p>' +
+          (hasBoth ?
+            '<h3 style="font-size:.9rem;font-weight:700;margin-bottom:.5rem;">Changes</h3>' +
+            diffHtml(entry.prevSnapshot, entry.newSnapshot) :
+            (entry.prevSnapshot ?
+              '<h3 style="font-size:.9rem;font-weight:700;margin-bottom:.5rem;">Deleted Record</h3>' + snapshotToHtml(entry.prevSnapshot) :
+              entry.newSnapshot ?
+              '<h3 style="font-size:.9rem;font-weight:700;margin-bottom:.5rem;">Created Record</h3>' + snapshotToHtml(entry.newSnapshot) : '')) +
+        '</div>' +
+        '<div class="modal-footer">' +
+          '<button class="btn btn-ghost" id="aud-detail-done">Close</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+    function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+    overlay.querySelector('#aud-detail-close').addEventListener('click', close);
+    overlay.querySelector('#aud-detail-done').addEventListener('click', close);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) close(); });
+  }
+
+  /* ── SETTINGS ────────────────────────────────────────────── */
+  function renderSettings(container) {
+    container.innerHTML =
+      '<div class="page-inner">' +
+        '<div class="page-header">' +
+          '<div><h1>Settings</h1><p>Manage your data and app preferences</p></div>' +
+        '</div>' +
+
+        /* Data Management */
+        '<div class="settings-section">' +
+          '<h2 class="settings-section-title">Data Management</h2>' +
+          '<div class="settings-cards">' +
+
+            '<div class="settings-card">' +
+              '<div class="settings-card-icon">📤</div>' +
+              '<div class="settings-card-body">' +
+                '<div class="settings-card-title">Export Data</div>' +
+                '<div class="settings-card-desc">Download all your data (activities, payments, audit log) as a JSON file for backup or transfer.</div>' +
+                '<button class="btn btn-outline btn-sm mt-2" id="btn-export">Export as JSON</button>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="settings-card">' +
+              '<div class="settings-card-icon">📥</div>' +
+              '<div class="settings-card-body">' +
+                '<div class="settings-card-title">Import Data</div>' +
+                '<div class="settings-card-desc">Import data from a previously exported JSON file. This will <strong>overwrite</strong> the matching data.</div>' +
+                '<label class="btn btn-outline btn-sm mt-2" style="cursor:pointer">' +
+                  'Import from JSON<input type="file" id="import-file" accept=".json" style="display:none">' +
+                '</label>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="settings-card settings-card-danger">' +
+              '<div class="settings-card-icon">⚠️</div>' +
+              '<div class="settings-card-body">' +
+                '<div class="settings-card-title">Reset App Data</div>' +
+                '<div class="settings-card-desc">Remove all your data and restore the original demo data. This <strong>cannot be undone</strong>.</div>' +
+                '<button class="btn btn-danger btn-sm mt-2" id="btn-reset">Reset to Demo Data</button>' +
+              '</div>' +
+            '</div>' +
+
+          '</div>' +
+        '</div>' +
+
+        /* App Info */
+        '<div class="settings-section">' +
+          '<h2 class="settings-section-title">App Information</h2>' +
+          '<div class="card">' +
+            '<div class="card-body">' +
+              '<dl class="detail-grid">' +
+                '<dt>App Name</dt><dd><strong>ICO Renovation Reporting</strong></dd>' +
+                '<dt>Version</dt><dd>' + escHtml(APP_VERSION) + ' (Phase 2)</dd>' +
+                '<dt>Storage</dt><dd>Local (browser localStorage)</dd>' +
+                '<dt>Activities</dt><dd>' + DB.getActivities().length + ' records</dd>' +
+                '<dt>Payments</dt><dd>' + DB.getPayments().length + ' records</dd>' +
+                '<dt>Audit Entries</dt><dd>' + DB.getAuditLog().length + ' entries</dd>' +
+              '</dl>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        /* Cloud Sync Placeholder */
+        '<div class="settings-section">' +
+          '<h2 class="settings-section-title">Cloud Sync <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span></h2>' +
+          '<div class="card">' +
+            '<div class="card-body">' +
+              '<div class="empty-state" style="padding:1.5rem">' +
+                '<div class="empty-icon">☁️</div>' +
+                '<h3>Supabase Integration</h3>' +
+                '<p>Cloud sync and multi-device access will be available in a future update. Your data is safely stored locally for now.</p>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+      '</div>';
+
+    /* Export */
+    container.querySelector('#btn-export').addEventListener('click', function() {
+      var data = DB.exportAllData();
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var url  = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'ico-data-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('Data exported successfully', 'success');
+    });
+
+    /* Import */
+    container.querySelector('#import-file').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          var data = JSON.parse(ev.target.result);
+          DB.importAllData(data);
+          toast('Data imported successfully. Refreshing…', 'success');
+          setTimeout(function() { navigate('dashboard'); }, 1000);
+        } catch (err) {
+          toast('Import failed: invalid JSON file', 'danger');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    /* Reset */
+    container.querySelector('#btn-reset').addEventListener('click', function() {
+      if (confirm('Reset ALL data to the original demo data? This cannot be undone.')) {
+        DB.resetAllData();
+        toast('App data has been reset to demo data', 'warning');
+        setTimeout(function() { navigate('dashboard'); }, 800);
+      }
+    });
   }
 
   /* ── Bootstrap ───────────────────────────────────────────── */
