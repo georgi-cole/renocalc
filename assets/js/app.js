@@ -147,10 +147,10 @@
       'set.exportdesc': 'Download all your data (activities, audit log) as a JSON file for backup or transfer.',
       'set.exportbtn': 'Export as JSON',
       'set.import': 'Import Data',
-      'set.importdesc': 'Import data from a previously exported JSON file. This will <strong>overwrite</strong> the matching data.',
+      'set.importdesc': 'Import data from a previously exported JSON file. This will overwrite the matching data.',
       'set.importbtn': 'Import from JSON',
       'set.reset': 'Reset App Data',
-      'set.resetdesc': 'Remove all your data and restore the original demo data. This <strong>cannot be undone</strong>.',
+      'set.resetdesc': 'Remove all your data and restore the original demo data. This cannot be undone.',
       'set.resetbtn': 'Reset to Demo Data',
       'set.appinfo': 'App Information',
       'set.appname': 'ICO Renovation Reporting',
@@ -307,10 +307,10 @@
       'set.exportdesc': 'Изтеглете всички данни (дейности, журнал) като JSON файл за резервно копие.',
       'set.exportbtn': 'Експорт като JSON',
       'set.import': 'Импорт на данни',
-      'set.importdesc': 'Импортирайте данни от предварително експортиран JSON файл. Това ще <strong>замени</strong> съответстващите данни.',
+      'set.importdesc': 'Импортирайте данни от предварително експортиран JSON файл. Това ще замени съответстващите данни.',
       'set.importbtn': 'Импорт от JSON',
       'set.reset': 'Нулиране на данните',
-      'set.resetdesc': 'Изтрийте всички данни и възстановете оригиналните демо данни. Това <strong>не може да бъде отменено</strong>.',
+      'set.resetdesc': 'Изтрийте всички данни и възстановете оригиналните демо данни. Това не може да бъде отменено.',
       'set.resetbtn': 'Нулиране към демо данни',
       'set.appinfo': 'Информация за приложението',
       'set.appname': 'ICO Ремонтни дейности',
@@ -1366,7 +1366,7 @@
               '<div class="settings-card-icon">📥</div>' +
               '<div class="settings-card-body">' +
                 '<div class="settings-card-title">' + escHtml(t('set.import')) + '</div>' +
-                '<div class="settings-card-desc">' + t('set.importdesc') + '</div>' +
+                '<div class="settings-card-desc">' + escHtml(t('set.importdesc')) + '</div>' +
                 '<label class="btn btn-outline btn-sm mt-2" style="cursor:pointer">' +
                   escHtml(t('set.importbtn')) + '<input type="file" id="import-file" accept=".json" style="display:none">' +
                 '</label>' +
@@ -1377,7 +1377,7 @@
               '<div class="settings-card-icon">\u26a0\ufe0f</div>' +
               '<div class="settings-card-body">' +
                 '<div class="settings-card-title">' + escHtml(t('set.reset')) + '</div>' +
-                '<div class="settings-card-desc">' + t('set.resetdesc') + '</div>' +
+                '<div class="settings-card-desc">' + escHtml(t('set.resetdesc')) + '</div>' +
                 '<button class="btn btn-danger btn-sm mt-2" id="btn-reset">' + escHtml(t('set.resetbtn')) + '</button>' +
               '</div>' +
             '</div>' +
