@@ -92,20 +92,20 @@ CREATE POLICY "activities_select_authenticated"
 CREATE POLICY "activities_insert_authenticated"
   ON activities FOR INSERT
   TO authenticated
-  WITH CHECK (true);
+  WITH CHECK (created_by = auth.uid()::text);
 
 -- Allow the creator to update/delete their own activities.
 -- TODO: Relax to allow project-wide edits if a shared model is preferred.
 CREATE POLICY "activities_update_creator"
   ON activities FOR UPDATE
   TO authenticated
-  USING (true)
-  WITH CHECK (true);
+  USING (created_by = auth.uid()::text)
+  WITH CHECK (created_by = auth.uid()::text);
 
 CREATE POLICY "activities_delete_creator"
   ON activities FOR DELETE
   TO authenticated
-  USING (true);
+  USING (created_by = auth.uid()::text);
 
 
 -- ---------------------------------------------------------------------------
