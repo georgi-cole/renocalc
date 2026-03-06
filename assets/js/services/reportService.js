@@ -97,7 +97,7 @@
       if (data.profiles)   ICO.AuthService._import(data.profiles);
       if (data.activities) ICO.ActivityService._import(data.activities);
       if (data.payments)   ICO.PaymentService._import(data.payments);
-      if (data.auditLog)   ICO.StorageService.set('audit_log', data.auditLog);
+      if (data.auditLog)   ICO.AuditService._import(data.auditLog);
     },
 
     /**
