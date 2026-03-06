@@ -39,7 +39,6 @@
 
   /** In-memory cache of all profiles. */
   var _cache = [];
-  var _ready = false;
 
   /** Fetch all profiles from Supabase into the local cache. */
   function _load() {
@@ -51,7 +50,6 @@
           console.error('[ICO:AuthService] Load error:', res.error.message);
         } else {
           _cache = (res.data || []).map(_fromRow);
-          _ready = true;
           console.info('[ICO:AuthService] Loaded ' + _cache.length + ' profiles from Supabase.');
         }
       });

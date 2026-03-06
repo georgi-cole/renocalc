@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   id          TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
   timestamp   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   user_id     TEXT        REFERENCES profiles(id) ON DELETE SET NULL,
-  user_name   TEXT,
+  entity_name TEXT,
   entity      TEXT        NOT NULL,
   entity_id   TEXT,
   action      TEXT        NOT NULL

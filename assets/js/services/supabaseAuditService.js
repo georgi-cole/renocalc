@@ -9,7 +9,7 @@
  *   id          text primary key default gen_random_uuid()::text
  *   timestamp   timestamptz default now()
  *   user_id     text
- *   user_name   text
+ *   entity_name text   (name of the audited entity, e.g. activity title)
  *   entity      text
  *   entity_id   text
  *   action      text
@@ -39,7 +39,6 @@
 
   /** In-memory cache – most-recent entry first. */
   var _cache = [];
-  var _ready = false;
 
   /** Fetch the latest audit entries from Supabase into the local cache. */
   function _load() {
@@ -52,7 +51,6 @@
           console.error('[ICO:AuditService] Load error:', res.error.message);
         } else {
           _cache = (res.data || []).map(_fromRow);
-          _ready = true;
           console.info('[ICO:AuditService] Loaded ' + _cache.length + ' audit entries from Supabase.');
         }
       });
@@ -66,7 +64,7 @@
       action:       row.action,
       entity:       row.entity,
       entityId:     row.entity_id,
-      entityName:   row.user_name || '',
+      entityName:   row.entity_name || '',
       detail:       row.summary   || '',
       userId:       row.user_id   || null,
       prevSnapshot: row.previous  || null,
@@ -82,7 +80,7 @@
       action:    entry.action,
       entity:    entry.entity,
       entity_id: entry.entityId,
-      user_name: entry.entityName || '',
+      entity_name: entry.entityName || '',
       summary:   entry.detail     || '',
       user_id:   entry.userId     || null,
       previous:  entry.prevSnapshot || null,
@@ -142,18 +140,15 @@
      * Overwrite cache and sync to Supabase (used by ReportService.importAll).
      * Upserts all entries so existing rows are not duplicated.
      */
-    * Upserts all entries so existing rows are not duplicated.
-    */
     _import: function (list) {
-     // Ensure cache always remains an array, even if list is null/undefined.
-     _cache = list || [];
-     if (!_cache.length) { return; }
-     var rows = _cache.map(_toRow);
-     sb.from(TABLE).upsert(rows).then(function (res) {
-       if (res.error) {
-         console.error('[ICO:AuditService] Import upsert error:', res.error.message);
-       }
-     });
+      _cache = list || [];
+      if (!_cache.length) { return; }
+      var rows = _cache.map(_toRow);
+      sb.from(TABLE).upsert(rows).then(function (res) {
+        if (res.error) {
+          console.error('[ICO:AuditService] Import upsert error:', res.error.message);
+        }
+      });
     }
   };
 

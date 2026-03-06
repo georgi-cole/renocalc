@@ -45,7 +45,6 @@
 
   /** In-memory cache of all activities. */
   var _cache = [];
-  var _ready = false;
 
   /** Fetch all activities from Supabase into the local cache. */
   function _load() {
@@ -57,7 +56,6 @@
           console.error('[ICO:ActivityService] Load error:', res.error.message);
         } else {
           _cache = (res.data || []).map(_fromRow);
-          _ready = true;
           console.info('[ICO:ActivityService] Loaded ' + _cache.length + ' activities from Supabase.');
         }
       });
