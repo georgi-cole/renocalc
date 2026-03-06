@@ -164,13 +164,38 @@
     /**
      * Clear all profiles in Supabase and reset the cache
      * (used by ReportService.resetAll).
+     * Also restores the original seed profiles to maintain
+     * parity with the local AuthService behavior.
      */
     _reset: function () {
+      var seeds = ICO.SEED_PROFILES || [];
+
+      // Clear in-memory cache immediately.
       _cache = [];
+
+      // Delete all existing rows, then re-seed with the original profiles.
       sb.from(TABLE).delete().neq('id', '').then(function (res) {
         if (res.error) {
           console.error('[ICO:AuthService] Reset delete error:', res.error.message);
+          return;
         }
+
+        if (!seeds.length) {
+          // No seed data defined; leave table empty.
+          return;
+        }
+
+        // Restore seed profiles into the cache.
+        _cache = seeds.map(function (p) {
+          return Object.assign({}, p);
+        });
+
+        var rows = _cache.map(_toRow);
+        sb.from(TABLE).upsert(rows).then(function (upsertRes) {
+          if (upsertRes.error) {
+            console.error('[ICO:AuthService] Reset seed upsert error:', upsertRes.error.message);
+          }
+        });
       });
     }
   };
