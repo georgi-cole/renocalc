@@ -170,7 +170,15 @@
   <!-- Toast notification container -->
   <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
 
-  <!-- Scripts -->
+  <!-- Scripts – load order matters; each file depends on those above it -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/services/storage.js"></script>
+  <script src="assets/js/services/auditService.js"></script>
+  <script src="assets/js/services/authService.js"></script>
+  <script src="assets/js/services/activityService.js"></script>
+  <script src="assets/js/services/paymentService.js"></script>
+  <script src="assets/js/services/reportService.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
