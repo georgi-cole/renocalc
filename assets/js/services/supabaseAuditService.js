@@ -6,7 +6,7 @@
  * loaded earlier if no Supabase client exists.
  *
  * Table: audit_logs
- *   id          uuid primary key default gen_random_uuid()
+ *   id          text primary key default gen_random_uuid()::text
  *   timestamp   timestamptz default now()
  *   user_id     text
  *   user_name   text
