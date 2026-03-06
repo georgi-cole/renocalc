@@ -109,7 +109,7 @@
   var DB = {
     /* ----- Profiles ----- */
     getProfiles: function () {
-      return Store.get('profiles') || SEED_PROFILES;
+      return Store.get('profiles') || JSON.parse(JSON.stringify(SEED_PROFILES));
     },
     saveProfiles: function (list) {
       Store.set('profiles', list);
@@ -128,7 +128,7 @@
 
     /* ----- Activities ----- */
     getActivities: function () {
-      return Store.get('activities') || SEED_ACTIVITIES;
+      return Store.get('activities') || JSON.parse(JSON.stringify(SEED_ACTIVITIES));
     },
     saveActivities: function (list) {
       Store.set('activities', list);
@@ -138,24 +138,24 @@
       var a = Object.assign({ id: 'act_' + uid(), createdAt: nowISO(), updatedAt: nowISO() }, data);
       list.push(a);
       DB.saveActivities(list);
-      DB.audit('create', 'Activity', a.id, a.title, 'Activity created', userId);
+      DB.audit('create', 'Activity', a.id, a.title, 'Activity created', userId, null, a);
       return a;
     },
     updateActivity: function (id, data, userId) {
       var list = DB.getActivities();
       var idx = list.findIndex(function (a) { return a.id === id; });
       if (idx === -1) return null;
-      var prev = list[idx];
+      var prev = Object.assign({}, list[idx]);
       list[idx] = Object.assign({}, prev, data, { id: id, updatedAt: nowISO() });
       DB.saveActivities(list);
-      DB.audit('update', 'Activity', id, list[idx].title, 'Activity updated', userId);
+      DB.audit('update', 'Activity', id, list[idx].title, 'Activity updated', userId, prev, list[idx]);
       return list[idx];
     },
     deleteActivity: function (id, userId) {
       var list = DB.getActivities();
       var a = list.find(function (x) { return x.id === id; });
       DB.saveActivities(list.filter(function (x) { return x.id !== id; }));
-      if (a) DB.audit('delete', 'Activity', id, a.title, 'Activity deleted', userId);
+      if (a) DB.audit('delete', 'Activity', id, a.title, 'Activity deleted', userId, a, null);
     },
     getActivityById: function (id) {
       return DB.getActivities().find(function (a) { return a.id === id; });
@@ -163,7 +163,7 @@
 
     /* ----- Payments ----- */
     getPayments: function () {
-      return Store.get('payments') || SEED_PAYMENTS;
+      return Store.get('payments') || JSON.parse(JSON.stringify(SEED_PAYMENTS));
     },
     savePayments: function (list) {
       Store.set('payments', list);
@@ -173,24 +173,24 @@
       var p = Object.assign({ id: 'pay_' + uid(), createdAt: nowISO(), updatedAt: nowISO() }, data);
       list.push(p);
       DB.savePayments(list);
-      DB.audit('create', 'Payment', p.id, p.reference || 'Payment', 'Payment of ' + ICO.fmt.currency(p.amount) + ' created', userId);
+      DB.audit('create', 'Payment', p.id, p.reference || 'Payment', 'Payment of ' + ICO.fmt.currency(p.amount) + ' created', userId, null, p);
       return p;
     },
     updatePayment: function (id, data, userId) {
       var list = DB.getPayments();
       var idx = list.findIndex(function (p) { return p.id === id; });
       if (idx === -1) return null;
-      var prev = list[idx];
+      var prev = Object.assign({}, list[idx]);
       list[idx] = Object.assign({}, prev, data, { id: id, updatedAt: nowISO() });
       DB.savePayments(list);
-      DB.audit('update', 'Payment', id, list[idx].reference || 'Payment', 'Payment updated', userId);
+      DB.audit('update', 'Payment', id, list[idx].reference || 'Payment', 'Payment updated', userId, prev, list[idx]);
       return list[idx];
     },
     deletePayment: function (id, userId) {
       var list = DB.getPayments();
       var p = list.find(function (x) { return x.id === id; });
       DB.savePayments(list.filter(function (x) { return x.id !== id; }));
-      if (p) DB.audit('delete', 'Payment', id, p.reference || 'Payment', 'Payment deleted', userId);
+      if (p) DB.audit('delete', 'Payment', id, p.reference || 'Payment', 'Payment deleted', userId, p, null);
     },
     getPaymentById: function (id) {
       return DB.getPayments().find(function (p) { return p.id === id; });
@@ -200,7 +200,7 @@
     getAuditLog: function () {
       return Store.get('audit_log') || [];
     },
-    audit: function (action, entity, entityId, entityName, detail, userId) {
+    audit: function (action, entity, entityId, entityName, detail, userId, prevSnapshot, newSnapshot) {
       var log = DB.getAuditLog();
       log.unshift({
         id: 'aud_' + uid(),
@@ -210,7 +210,9 @@
         entityId: entityId,
         entityName: entityName || '',
         detail: detail || '',
-        userId: userId || null
+        userId: userId || null,
+        prevSnapshot: prevSnapshot || null,
+        newSnapshot: newSnapshot || null
       });
       // keep latest 500 entries
       if (log.length > 500) log = log.slice(0, 500);
@@ -240,6 +242,31 @@
         totalRemaining: totalRemaining,
         totalSpent: totalPaid
       };
+    },
+
+    /* ----- Settings: Export / Import / Reset ----- */
+    exportAllData: function () {
+      return {
+        exportedAt: nowISO(),
+        version: 1,
+        profiles:   DB.getProfiles(),
+        activities: DB.getActivities(),
+        payments:   DB.getPayments(),
+        auditLog:   DB.getAuditLog()
+      };
+    },
+    importAllData: function (data) {
+      if (!data || typeof data !== 'object') throw new Error('Invalid data');
+      if (data.profiles)   Store.set('profiles',   data.profiles);
+      if (data.activities) Store.set('activities', data.activities);
+      if (data.payments)   Store.set('payments',   data.payments);
+      if (data.auditLog)   Store.set('audit_log',  data.auditLog);
+    },
+    resetAllData: function () {
+      Store.set('profiles',   SEED_PROFILES);
+      Store.set('activities', SEED_ACTIVITIES);
+      Store.set('payments',   SEED_PAYMENTS);
+      Store.set('audit_log',  []);
     }
   };
 

@@ -923,3 +923,104 @@ hr { border: none; border-top: 1px solid var(--ico-border); margin: 1rem 0; }
   .main-content { margin: 0 !important; padding: 0 !important; }
   .card { box-shadow: none !important; border: 1px solid #ccc !important; }
 }
+
+
+/* ============================================================
+   REPORTS – date grouping & detail grid
+   ============================================================ */
+.filter-bar-wrap { flex-wrap: wrap; }
+.filter-date {
+  padding: .55rem .75rem;
+  border: 1.5px solid var(--ico-border);
+  border-radius: 8px;
+  background: var(--ico-surface);
+  color: var(--ico-text);
+  font-size: .88rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.filter-date:focus { border-color: var(--ico-primary-light); }
+
+.report-date-group { border-bottom: 1px solid var(--ico-border); }
+.report-date-group:last-child { border-bottom: none; }
+.report-date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .65rem 1.25rem;
+  background: var(--ico-bg);
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ico-text-muted);
+  border-bottom: 1px solid var(--ico-border);
+}
+.report-date-total { font-weight: 700; color: var(--ico-primary); }
+.report-detail-row:hover td { background: #f0f4ff; cursor: pointer; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .4rem .9rem;
+  font-size: .9rem;
+}
+.detail-grid dt {
+  font-weight: 600;
+  color: var(--ico-text-muted);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding-top: .15rem;
+}
+.detail-grid dd { color: var(--ico-text); }
+
+
+/* ============================================================
+   AUDIT LOG – detail modal meta row
+   ============================================================ */
+.audit-meta-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-bottom: .5rem;
+}
+
+
+/* ============================================================
+   SETTINGS PAGE
+   ============================================================ */
+.settings-section { margin-bottom: 2rem; }
+.settings-section-title {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ico-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 1rem;
+  padding-bottom: .4rem;
+  border-bottom: 1.5px solid var(--ico-border);
+}
+.settings-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.settings-card {
+  background: var(--ico-surface);
+  border: 1px solid var(--ico-border);
+  border-radius: var(--ico-radius);
+  box-shadow: var(--ico-shadow);
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.settings-card-danger { border-color: #fca5a5; background: #fff5f5; }
+.settings-card-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: .1rem; }
+.settings-card-body { flex: 1; }
+.settings-card-title { font-size: .95rem; font-weight: 700; margin-bottom: .25rem; }
+.settings-card-desc { font-size: .83rem; color: var(--ico-text-muted); line-height: 1.5; }
+@media (max-width: 767px) {
+  .settings-cards { grid-template-columns: 1fr; }
+  .filter-date { flex: 1 1 140px; }
+}
