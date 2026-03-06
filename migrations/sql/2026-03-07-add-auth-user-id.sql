@@ -46,6 +46,7 @@ CREATE POLICY "profiles_select_authenticated"
 -- New cloud-mode profiles set id = auth.uid()::TEXT for seamless RLS; legacy
 -- rows may use auth_user_id as the ownership signal instead.
 DROP POLICY IF EXISTS "profiles_insert_authenticated" ON profiles;
+DROP POLICY IF EXISTS "profiles_insert_own" ON profiles;
 CREATE POLICY "profiles_insert_own"
   ON profiles FOR INSERT
   TO authenticated
@@ -120,4 +121,4 @@ DROP POLICY IF EXISTS "audit_logs_insert_authenticated" ON audit_logs;
 CREATE POLICY "audit_logs_insert_authenticated"
   ON audit_logs FOR INSERT
   TO authenticated
-  WITH CHECK (true);
+  WITH CHECK (user_id = auth.uid()::TEXT);

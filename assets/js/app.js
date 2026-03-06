@@ -199,7 +199,9 @@
       'auth.signupConfirm': 'Account created! Check your email to confirm, then sign in.',
       'set.storageval.cloud': 'Cloud (Supabase)',
       'set.cloudsync.active': 'Cloud Sync',
-      'set.cloudsync.activedesc': 'Your data is synced to Supabase cloud storage. Authenticated access only.'
+      'set.cloudsync.activedesc': 'Your data is synced to Supabase cloud storage. Authenticated access only.',
+      'set.cloudsync.badge.active': 'Active',
+      'set.cloudsync.badge.comingsoon': 'Coming Soon'
     },
     bg: {
       'brand.tagline': 'Ремонтни дейности',
@@ -389,7 +391,9 @@
       'auth.signupConfirm': 'Акаунтът е създаден! Проверете имейла си за потвърждение.',
       'set.storageval.cloud': 'Облак (Supabase)',
       'set.cloudsync.active': 'Облачна синхронизация',
-      'set.cloudsync.activedesc': 'Данните ви се синхронизират с Supabase облачното хранилище.'
+      'set.cloudsync.activedesc': 'Данните ви се синхронизират с Supabase облачното хранилище.',
+      'set.cloudsync.badge.active': 'Активно',
+      'set.cloudsync.badge.comingsoon': 'Очаквайте'
     }
   };
 
@@ -1679,8 +1683,8 @@
         '<div class="settings-section">' +
           '<h2 class="settings-section-title">' + escHtml(t('set.cloudsync.active')) +
             (ICO.SupabaseClient
-              ? ' <span class="badge badge-success" style="vertical-align:middle">Active</span>'
-              : ' <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span>') +
+              ? ' <span class="badge badge-success" style="vertical-align:middle">' + escHtml(t('set.cloudsync.badge.active')) + '</span>'
+              : ' <span class="badge badge-accent" style="vertical-align:middle">' + escHtml(t('set.cloudsync.badge.comingsoon')) + '</span>') +
           '</h2>' +
           '<div class="card">' +
             '<div class="card-body">' +

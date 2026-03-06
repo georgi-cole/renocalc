@@ -213,6 +213,9 @@
             .then(function (profile) {
               _currentProfile = profile;
               return { profile: profile, error: null };
+            })
+            .catch(function (err) {
+              return { profile: null, error: err || new Error('Failed to create profile') };
             });
         });
     },
@@ -237,6 +240,9 @@
             .then(function (profile) {
               _currentProfile = profile;
               return { profile: profile, error: null };
+            })
+            .catch(function (err) {
+              return { profile: null, error: err || new Error('Failed to load profile') };
             });
         });
     },
@@ -341,10 +347,29 @@
 
           return sb.from(TABLE).insert(_toRow(newProfile)).then(function (insertRes) {
             if (insertRes.error) {
-              // Log the error but still return the in-memory profile so the
-              // UI can continue working (e.g. if the row already exists from
-              // a concurrent request).
-              console.error('[ICO:SupabaseAuth] Profile insert error:', insertRes.error.message);
+              // A unique-constraint violation usually means a concurrent request
+              // already created the row.  Re-query so we get the actual DB row
+              // rather than caching a profile that may not exist.
+              var isUniqueViolation = insertRes.error.code === '23505';
+              if (isUniqueViolation) {
+                return sb.from(TABLE)
+                  .select('*')
+                  .or('auth_user_id.eq.' + user.id + ',id.eq.' + user.id)
+                  .limit(1)
+                  .then(function (retryRes) {
+                    if (retryRes.error || !retryRes.data || !retryRes.data.length) {
+                      throw new Error('[ICO:SupabaseAuth] Could not fetch profile after duplicate insert: ' +
+                        (retryRes.error ? retryRes.error.message : 'no rows'));
+                    }
+                    var profile = _fromRow(retryRes.data[0]);
+                    var idx = _cache.findIndex(function (p) { return p.id === profile.id; });
+                    if (idx !== -1) { _cache[idx] = profile; } else { _cache.push(profile); }
+                    _currentProfile = profile;
+                    return profile;
+                  });
+              }
+              // Non-recoverable insert error – throw so callers can show an auth error.
+              throw new Error('[ICO:SupabaseAuth] Profile insert failed: ' + insertRes.error.message);
             }
             _cache.push(newProfile);
             _currentProfile = newProfile;
