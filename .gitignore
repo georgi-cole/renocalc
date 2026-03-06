@@ -1,0 +1,14 @@
+# Environment variable files containing secrets – never commit these
+.env
+.env.local
+.env.*.local
+
+# Jekyll build output
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# OS files
+.DS_Store
+Thumbs.db
