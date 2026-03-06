@@ -201,7 +201,11 @@
       'set.cloudsync.active': 'Cloud Sync',
       'set.cloudsync.activedesc': 'Your data is synced to Supabase cloud storage. Authenticated access only.',
       'set.cloudsync.badge.active': 'Active',
-      'set.cloudsync.badge.comingsoon': 'Coming Soon'
+      'set.cloudsync.badge.comingsoon': 'Coming Soon',
+      'set.language': 'Language',
+      'set.languagedesc': 'Choose the display language for the app.',
+      'set.lang.en': 'English',
+      'set.lang.bg': 'Bulgarian'
     },
     bg: {
       'brand.tagline': 'Ремонтни дейности',
@@ -393,7 +397,11 @@
       'set.cloudsync.active': 'Облачна синхронизация',
       'set.cloudsync.activedesc': 'Данните ви се синхронизират с Supabase облачното хранилище.',
       'set.cloudsync.badge.active': 'Активно',
-      'set.cloudsync.badge.comingsoon': 'Очаквайте'
+      'set.cloudsync.badge.comingsoon': 'Очаквайте',
+      'set.language': 'Език',
+      'set.languagedesc': 'Изберете език на приложението.',
+      'set.lang.en': 'Английски',
+      'set.lang.bg': 'Български'
     }
   };
 
@@ -1630,6 +1638,19 @@
         '</div>' +
 
         '<div class="settings-section">' +
+          '<h2 class="settings-section-title">' + escHtml(t('set.language')) + '</h2>' +
+          '<div class="card">' +
+            '<div class="card-body">' +
+              '<p style="font-size:.9rem;margin-bottom:.75rem">' + escHtml(t('set.languagedesc')) + '</p>' +
+              '<div class="lang-selector" style="justify-content:flex-start;gap:.5rem">' +
+                '<button class="lang-btn' + (state.lang === 'en' ? ' active' : '') + '" data-lang="en" aria-label="English" style="font-size:1.5rem">🇺🇸 <span style="font-size:.9rem;vertical-align:middle">' + escHtml(t('set.lang.en')) + '</span></button>' +
+                '<button class="lang-btn' + (state.lang === 'bg' ? ' active' : '') + '" data-lang="bg" aria-label="Bulgarian" style="font-size:1.5rem">🇧🇬 <span style="font-size:.9rem;vertical-align:middle">' + escHtml(t('set.lang.bg')) + '</span></button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="settings-section">' +
           '<h2 class="settings-section-title">' + escHtml(t('set.datamgmt')) + '</h2>' +
           '<div class="settings-cards">' +
 
@@ -1711,6 +1732,16 @@
       a.click();
       URL.revokeObjectURL(url);
       toast(t('set.exported'), 'success');
+    });
+
+    container.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var lang = btn.getAttribute('data-lang');
+        state.lang = lang;
+        try { localStorage.setItem('ico_lang', lang); } catch (e) { /* ignore */ }
+        applyTranslations();
+        renderSettings(container);
+      });
     });
 
     container.querySelector('#import-file').addEventListener('change', function(e) {
