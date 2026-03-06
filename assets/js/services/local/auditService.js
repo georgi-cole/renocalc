@@ -6,7 +6,7 @@
  * ICO.AuditService.log() immediately after each mutation.
  *
  * Phase 4 migration guide:
- *   Replace StorageService calls with INSERTs into a Supabase `audit_log`
+ *   Replace StorageService calls with INSERTs into a Supabase `audit_logs`
  *   table.  Row-Level Security should allow only INSERT (never UPDATE or
  *   DELETE) so the log remains tamper-proof.
  *
