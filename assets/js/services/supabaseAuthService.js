@@ -107,7 +107,7 @@
      */
     create: function (data) {
       var profile = Object.assign(
-        { id: ICO.uid(), createdAt: ICO.nowISO() },
+        { id: 'profile_' + ICO.uid(), createdAt: ICO.nowISO() },
         data
       );
       if (!profile.initials) {
