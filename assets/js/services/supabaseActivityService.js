@@ -214,9 +214,9 @@
      * Upserts all records so existing rows are not duplicated.
      */
     _import: function (list) {
-      _cache = list;
-      if (!list || !list.length) { return; }
-      var rows = list.map(_toRow);
+      _cache = list || [];
+      if (!_cache.length) { return; }
+      var rows = _cache.map(_toRow);
       sb.from(TABLE).upsert(rows).then(function (res) {
         if (res.error) {
           console.error('[ICO:ActivityService] Import upsert error:', res.error.message);
