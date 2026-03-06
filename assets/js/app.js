@@ -555,7 +555,7 @@
       });
       form.reset();
       renderProfileList();
-      toast(t('login.profilecreated', { name: name }) || 'Profile "' + name + '" created', 'success');
+      toast(t('login.profilecreated', { name: name }), 'success');
     });
 
     // Language selector buttons
