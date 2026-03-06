@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ICO – Innovation Creation Opportunities. Renovation tracking and reporting app.">
+  <title>ICO – Renovation Reporting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       SPLASH SCREEN
+       ════════════════════════════════════════════ -->
+  <div id="splash" role="status" aria-label="Loading ICO app">
+    <div class="splash-word" aria-hidden="true"></div>
+    <div class="splash-logo" aria-hidden="true"><span>I</span>CO</div>
+    <div class="splash-tagline" aria-hidden="true">Renovation Reporting</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       PROFILE / AUTH SCREEN
+       ════════════════════════════════════════════ -->
+  <div id="profile-screen" class="hidden">
+    <div class="profile-card">
+      <div class="profile-brand">
+        <div class="brand-mark"><span>I</span>CO</div>
+        <p>Renovation Reporting</p>
+      </div>
+
+      <p class="text-muted mb-2" style="font-size:.88rem;text-align:center">Select your profile to continue</p>
+      <div class="profile-list" id="profile-list">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="profile-divider">or create a new profile</div>
+
+      <form class="new-profile-form" id="new-profile-form" novalidate>
+        <div class="form-group">
+          <label for="pname">Full Name</label>
+          <input class="form-control" id="pname" name="pname" type="text" placeholder="Your full name" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="prole">Role <span class="text-muted">(optional)</span></label>
+          <input class="form-control" id="prole" name="prole" type="text" placeholder="e.g. Project Manager" autocomplete="organization-title">
+        </div>
+        <button type="submit" class="btn btn-outline btn-full">Create Profile &amp; Sign In</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       MAIN APP SHELL
+       ════════════════════════════════════════════ -->
+  <div id="app" class="hidden">
+
+    <!-- Sidebar overlay (mobile) -->
+    <div id="sidebar-overlay" class="sidebar-overlay hidden" aria-hidden="true"></div>
+
+    <!-- ─── Sidebar Navigation ─── -->
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-brand">
+        <div class="brand-mark"><span>I</span>CO</div>
+        <button class="btn btn-ghost btn-icon mobile-only" id="sidebar-close-btn" aria-label="Close menu" style="color:rgba(255,255,255,.7)">✕</button>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="avatar" aria-hidden="true">AR</div>
+        <div>
+          <div class="uname">Loading…</div>
+          <div class="urole">User</div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+
+        <button class="nav-item active" data-nav="dashboard" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">🏠</span>
+          Dashboard
+        </button>
+
+        <button class="nav-item" data-nav="activities">
+          <span class="nav-icon" aria-hidden="true">🔨</span>
+          Activities
+        </button>
+
+        <button class="nav-item" data-nav="payments">
+          <span class="nav-icon" aria-hidden="true">💳</span>
+          Payments
+        </button>
+
+        <div class="nav-section-label">Insights</div>
+
+        <button class="nav-item" data-nav="reports">
+          <span class="nav-icon" aria-hidden="true">📊</span>
+          Reports
+        </button>
+
+        <button class="nav-item" data-nav="auditlog">
+          <span class="nav-icon" aria-hidden="true">📜</span>
+          Audit Log
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button data-action="logout" aria-label="Sign out">
+          <span aria-hidden="true">🚪</span> Sign Out
+        </button>
+      </div>
+    </nav>
+
+    <!-- ─── Top Bar ─── -->
+    <header class="topbar" role="banner">
+      <button class="btn btn-ghost btn-icon mobile-only" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+        <span aria-hidden="true">☰</span>
+      </button>
+      <div class="brand-mark desktop-only"><span>I</span>CO</div>
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-icon" data-action="logout" aria-label="Sign out" title="Sign out">
+          <span aria-hidden="true">🚪</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ─── Main Content ─── -->
+    <main class="main-content" id="main-page" role="main">
+      <!-- rendered by JS -->
+    </main>
+
+    <!-- ─── Bottom Navigation (mobile) ─── -->
+    <nav class="bottom-nav" role="navigation" aria-label="Bottom navigation">
+      <button class="bottom-nav-item active" data-nav="dashboard">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="activities">
+        <span class="nav-icon" aria-hidden="true">🔨</span>
+        <span>Activities</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="payments">
+        <span class="nav-icon" aria-hidden="true">💳</span>
+        <span>Payments</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="reports">
+        <span class="nav-icon" aria-hidden="true">📊</span>
+        <span>Reports</span>
+      </button>
+      <button class="bottom-nav-item" data-nav="auditlog">
+        <span class="nav-icon" aria-hidden="true">📜</span>
+        <span>Log</span>
+      </button>
+    </nav>
+
+  </div><!-- #app -->
+
+  <!-- Toast notification container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
