@@ -88,6 +88,16 @@
       'act.toast.updated': 'Activity updated',
       'act.toast.deleted': 'Activity deleted',
       'act.confirm.delete': 'Delete "{title}"?',
+      'act.detail.title': 'Activity Detail',
+      'act.detail.close': 'Close',
+      'act.detail.createdat': 'Created',
+      'act.detail.updatedat': 'Last Updated',
+      'act.modal.fieldwhopaid': 'Who Paid',
+      'act.modal.fieldsupplier': 'Supplier',
+      'act.modal.fieldinvoice': 'Invoice Ref',
+      'act.modal.fieldcurrency': 'Currency',
+      'act.form.mandatory': 'Required Fields',
+      'act.form.optional': 'Additional Fields',
       'status.pending': 'Pending',
       'status.in_progress': 'In Progress',
       'status.completed': 'Completed',
@@ -251,6 +261,16 @@
       'act.toast.updated': 'Дейността е обновена',
       'act.toast.deleted': 'Дейността е изтрита',
       'act.confirm.delete': 'Изтриване на "{title}"?',
+      'act.detail.title': 'Детайли за дейност',
+      'act.detail.close': 'Затвори',
+      'act.detail.createdat': 'Създадена',
+      'act.detail.updatedat': 'Последна промяна',
+      'act.modal.fieldwhopaid': 'Кой плати',
+      'act.modal.fieldsupplier': 'Доставчик',
+      'act.modal.fieldinvoice': 'Фактура / реф.',
+      'act.modal.fieldcurrency': 'Валута',
+      'act.form.mandatory': 'Задължителни полета',
+      'act.form.optional': 'Допълнителни полета',
       'status.pending': 'Предстоящо',
       'status.in_progress': 'В процес',
       'status.completed': 'Завършено',
@@ -823,40 +843,45 @@
       container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔨</div><h3>' + escHtml(t('act.empty')) + '</h3><p>' + escHtml(t('act.emptysub')) + '</p></div>';
       return;
     }
-    container.innerHTML = '<div class="card"><div class="data-table-wrap"><table class="data-table">' +
-      '<thead><tr>' +
-        '<th>' + escHtml(t('act.col.date')) + '</th>' +
-        '<th>' + escHtml(t('act.col.title')) + '</th>' +
-        '<th>' + escHtml(t('act.col.category')) + '</th>' +
-        '<th>' + escHtml(t('act.col.status')) + '</th>' +
-        '<th>' + escHtml(t('act.col.paid')) + '</th>' +
-        '<th>' + escHtml(t('act.col.type')) + '</th>' +
-        '<th>' + escHtml(t('act.col.remaining')) + '</th>' +
-        '<th class="actions-col">' + escHtml(t('act.col.actions')) + '</th>' +
-      '</tr></thead><tbody>' +
-      acts.map(function (a) {
-        return '<tr>' +
-          '<td>' + escHtml(fmt.date(a.date)) + '</td>' +
-          '<td><strong>' + escHtml(a.title) + '</strong>' + (a.contractor ? '<br><small class="text-muted">' + escHtml(a.contractor) + '</small>' : '') + '</td>' +
-          '<td><span class="badge badge-info">' + escHtml(t('cat.' + a.category)) + '</span></td>' +
-          '<td>' + statusBadge(a.status) + '</td>' +
-          '<td>' + (a.paymentAmount != null ? escHtml(fmt.currency(a.paymentAmount)) : '<span class="text-muted">\u2014</span>') + '</td>' +
-          '<td>' + (a.paymentType ? '<span class="badge badge-default">' + escHtml(methodLabel(a.paymentType)) + '</span>' : '<span class="text-muted">\u2014</span>') + '</td>' +
-          '<td>' + (Number(a.remaining) > 0 ? '<span class="text-danger">' + escHtml(fmt.currency(a.remaining)) + '</span>' : escHtml(fmt.currency(a.remaining || 0))) + '</td>' +
-          '<td class="actions-col">' +
-            '<button class="btn btn-outline btn-sm" data-edit-act="' + escHtml(a.id) + '">' + escHtml(t('act.edit')) + '</button> ' +
-            '<button class="btn btn-danger btn-sm" data-del-act="' + escHtml(a.id) + '">' + escHtml(t('act.del')) + '</button>' +
-          '</td>' +
-        '</tr>';
-      }).join('') +
-      '</tbody></table></div></div>';
 
-    container.querySelectorAll('[data-edit-act]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openActivityModal(btn.getAttribute('data-edit-act')); });
-    });
-    container.querySelectorAll('[data-del-act]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-del-act');
+    /* Compact list: each row shows date | tappable title | amount | actions */
+    container.innerHTML =
+      '<div class="card"><div class="act-list">' +
+      acts.map(function (a) {
+        var amtHtml = a.paymentAmount != null
+          ? escHtml(fmt.currency(a.paymentAmount))
+          : '<span class="text-muted">\u2014</span>';
+        return '<div class="act-row compact">' +
+          '<div class="act-row-left">' +
+            '<span class="act-row-date">' + escHtml(fmt.date(a.date)) + '</span>' +
+            '<button class="act-row-title-btn" data-action="open" data-act-id="' + escHtml(a.id) + '" title="' + escHtml(t('act.detail.title')) + '">' +
+              escHtml(a.title) +
+            '</button>' +
+          '</div>' +
+          '<span class="act-row-amount">' + amtHtml + '</span>' +
+          '<div class="act-row-actions">' +
+            '<button class="action-btn ghost" data-action="edit" data-act-id="' + escHtml(a.id) + '" aria-label="' + escHtml(t('act.edit')) + '">' +
+              '<span class="emoji" aria-hidden="true">✏️</span>' +
+              '<span class="label">' + escHtml(t('act.edit')) + '</span>' +
+            '</button>' +
+            '<button class="action-btn delete" data-action="delete" data-act-id="' + escHtml(a.id) + '" aria-label="' + escHtml(t('act.del')) + '">' +
+              '<span class="emoji" aria-hidden="true">🗑️</span>' +
+              '<span class="label">' + escHtml(t('act.del')) + '</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('') +
+      '</div></div>';
+
+    /* Event delegation – assign onclick to prevent listener accumulation on re-renders */
+    container.onclick = function (e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-action');
+      var id     = btn.getAttribute('data-act-id');
+      if (action === 'open')        { openActivityDetailModal(id); }
+      else if (action === 'edit')   { openActivityModal(id); }
+      else if (action === 'delete') {
         var a = DB.getActivityById(id);
         var msg = a ? (t('act.confirm.delete') || 'Delete?').replace('{title}', a.title) : 'Delete?';
         if (a && confirm(msg)) {
@@ -864,11 +889,86 @@
           renderActivitiesList(container);
           toast(t('act.toast.deleted'), 'danger');
         }
-      });
-    });
+      }
+    };
   }
 
-  /* ── Activity Modal ──────────────────────────────────────── */
+  /* ── Activity Detail Modal (read-only) ──────────────────── */
+  function openActivityDetailModal(id) {
+    var a = DB.getActivityById(id);
+    if (!a) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+
+    /* Helper to render a single read-only field cell.
+     * Pass rawHtml=true to treat `value` as pre-escaped HTML. */
+    function field(labelKey, value, fullWidth, rawHtml) {
+      var val;
+      if (rawHtml) {
+        val = value || '<span class="text-muted">\u2014</span>';
+      } else {
+        val = (value !== null && value !== undefined && String(value).trim() !== '')
+          ? escHtml(String(value))
+          : '<span class="text-muted">\u2014</span>';
+      }
+      return '<div class="act-detail-field' + (fullWidth ? ' act-detail-notes' : '') + '">' +
+        '<span class="act-detail-label">' + escHtml(t(labelKey)) + '</span>' +
+        '<span class="act-detail-value">' + val + '</span>' +
+      '</div>';
+    }
+
+    /* Remaining shown in red when positive (matches list view behaviour) */
+    var remainHtml = (a.remaining != null)
+      ? (Number(a.remaining) > 0
+          ? '<span class="text-danger">' + escHtml(fmt.currency(a.remaining)) + '</span>'
+          : escHtml(fmt.currency(a.remaining || 0)))
+      : null;
+
+    overlay.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="' + escHtml(t('act.detail.title')) + '">' +
+        '<div class="modal-header">' +
+          '<h2>' + escHtml(t('act.detail.title')) + '</h2>' +
+          '<button class="btn btn-ghost btn-icon" id="detail-modal-close" aria-label="' + escHtml(t('act.detail.close')) + '">\u2715</button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+          '<div class="act-detail-grid">' +
+            field('act.modal.fieldtitle',     a.title,                             true) +
+            field('act.modal.fielddate',      fmt.date(a.date)) +
+            field('act.modal.fieldcat',       t('cat.' + a.category) || a.category) +
+            field('act.modal.fieldstatus',    t('status.' + a.status) || a.status) +
+            field('act.modal.fieldamount',    a.paymentAmount != null ? fmt.currency(a.paymentAmount) : null) +
+            field('act.modal.fieldtype',      a.paymentType ? methodLabel(a.paymentType) : null) +
+            field('act.modal.fieldremaining', remainHtml, false, true) +
+            field('act.modal.fieldwhopaid',   a.whoPaid) +
+            field('act.modal.fieldcontractor',a.contractor) +
+            field('act.modal.fieldsupplier',  a.supplier) +
+            field('act.modal.fieldinvoice',   a.invoiceRef) +
+            field('act.modal.fieldcurrency',  a.currency) +
+            field('act.modal.fieldnotes',     a.notes,                             true) +
+            field('act.detail.createdat',     a.createdAt ? fmt.relativeTime(a.createdAt) : null) +
+            field('act.detail.updatedat',     a.updatedAt ? fmt.relativeTime(a.updatedAt) : null) +
+          '</div>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+          '<button class="btn btn-ghost" id="detail-modal-cancel">' + escHtml(t('act.detail.close')) + '</button>' +
+          '<button class="btn btn-outline" id="detail-modal-edit">' + escHtml(t('act.edit')) + '</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    function closeDetail() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+    overlay.querySelector('#detail-modal-close').addEventListener('click', closeDetail);
+    overlay.querySelector('#detail-modal-cancel').addEventListener('click', closeDetail);
+    overlay.querySelector('#detail-modal-edit').addEventListener('click', function () {
+      closeDetail();
+      openActivityModal(id);
+    });
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeDetail(); });
+  }
+
+  /* ── Activity Modal (create / edit) ─────────────────────── */
   function openActivityModal(id) {
     var editing = id ? DB.getActivityById(id) : null;
     var PAYMENT_TYPES = ['cash','bank_transfer','card','other'];
@@ -895,6 +995,7 @@
 
     var amountVal  = (editing && editing.paymentAmount != null) ? String(editing.paymentAmount) : '';
     var remainVal  = (editing && editing.remaining  != null)    ? String(editing.remaining)     : '0';
+    var req = ' <span style="color:var(--ico-danger)">*</span>';
 
     overlay.innerHTML =
       '<div class="modal" role="dialog" aria-modal="true" aria-label="' + escHtml(modalTitle) + '">' +
@@ -903,44 +1004,81 @@
           '<button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close">\u2715</button>' +
         '</div>' +
         '<div class="modal-body">' +
-          '<form id="activity-form">' +
+          '<form id="activity-form" class="activity-form">' +
             '<div class="form-grid">' +
+
+              /* ── Mandatory fields section ── */
+              '<div class="form-section-label">' + escHtml(t('act.form.mandatory')) + '</div>' +
+
+              /* Row: date + title */
               '<div class="form-group">' +
-                '<label for="act-title">' + escHtml(t('act.modal.fieldtitle')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="act-title" name="title" required value="' + escHtml((editing||{}).title||'') + '">' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="act-date">' + escHtml(t('act.modal.fielddate')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
+                '<label for="act-date">' + escHtml(t('act.modal.fielddate')) + req + '</label>' +
                 '<input class="form-control" id="act-date" name="date" type="date" required value="' + escHtml((editing||{}).date||ICO.today()) + '">' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-category">' + escHtml(t('act.modal.fieldcat')) + '</label>' +
-                '<select class="form-control" id="act-category" name="category">' + catOptions + '</select>' +
+                '<label for="act-title">' + escHtml(t('act.modal.fieldtitle')) + req + '</label>' +
+                '<input class="form-control" id="act-title" name="title" required value="' + escHtml((editing||{}).title||'') + '">' +
               '</div>' +
+
+              /* Row: payment amount + remaining */
+              '<div class="form-group">' +
+                '<label for="act-payment-amount">' + escHtml(t('act.modal.fieldamount')) + req + '</label>' +
+                '<input class="form-control" id="act-payment-amount" name="paymentAmount" type="number" min="0" step="0.01" required value="' + escHtml(amountVal) + '" placeholder="0.00">' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-remaining">' + escHtml(t('act.modal.fieldremaining')) + req + '</label>' +
+                '<input class="form-control" id="act-remaining" name="remaining" type="number" min="0" step="0.01" required value="' + escHtml(remainVal) + '" placeholder="0.00">' +
+              '</div>' +
+
+              /* ── Optional fields section ── */
+              '<div class="form-section-label">' + escHtml(t('act.form.optional')) + '</div>' +
+
+              /* Row: payment type + currency */
+              '<div class="form-group">' +
+                '<label for="act-payment-type">' + escHtml(t('act.modal.fieldtype')) + '</label>' +
+                '<select class="form-control" id="act-payment-type" name="paymentType" required>' + typeOptions + '</select>' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-currency">' + escHtml(t('act.modal.fieldcurrency')) + '</label>' +
+                '<input class="form-control" id="act-currency" name="currency" value="' + escHtml((editing||{}).currency||'') + '" placeholder="e.g. GBP">' +
+              '</div>' +
+
+              /* Row: status + who paid */
               '<div class="form-group">' +
                 '<label for="act-status">' + escHtml(t('act.modal.fieldstatus')) + '</label>' +
                 '<select class="form-control" id="act-status" name="status">' + statusOptions + '</select>' +
               '</div>' +
               '<div class="form-group">' +
+                '<label for="act-whopaid">' + escHtml(t('act.modal.fieldwhopaid')) + '</label>' +
+                '<input class="form-control" id="act-whopaid" name="whoPaid" value="' + escHtml((editing||{}).whoPaid||'') + '">' +
+              '</div>' +
+
+              /* Row: category + contractor/supplier */
+              '<div class="form-group">' +
+                '<label for="act-category">' + escHtml(t('act.modal.fieldcat')) + '</label>' +
+                '<select class="form-control" id="act-category" name="category">' + catOptions + '</select>' +
+              '</div>' +
+              '<div class="form-group">' +
                 '<label for="act-contractor">' + escHtml(t('act.modal.fieldcontractor')) + '</label>' +
                 '<input class="form-control" id="act-contractor" name="contractor" value="' + escHtml((editing||{}).contractor||'') + '">' +
               '</div>' +
+
+              /* Row: supplier + invoice ref */
               '<div class="form-group">' +
+                '<label for="act-supplier">' + escHtml(t('act.modal.fieldsupplier')) + '</label>' +
+                '<input class="form-control" id="act-supplier" name="supplier" value="' + escHtml((editing||{}).supplier||'') + '">' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-invoiceref">' + escHtml(t('act.modal.fieldinvoice')) + '</label>' +
+                '<input class="form-control" id="act-invoiceref" name="invoiceRef" value="' + escHtml((editing||{}).invoiceRef||'') + '">' +
+              '</div>' +
+
+              /* Notes – full width, last */
+              '<div class="form-group full">' +
                 '<label for="act-notes">' + escHtml(t('act.modal.fieldnotes')) + '</label>' +
-                '<textarea class="form-control" id="act-notes" name="notes" rows="2">' + escHtml((editing||{}).notes||'') + '</textarea>' +
+                '<textarea class="form-control" id="act-notes" name="notes" rows="3">' + escHtml((editing||{}).notes||'') + '</textarea>' +
               '</div>' +
-              '<div class="form-group">' +
-                '<label for="act-payment-amount">' + escHtml(t('act.modal.fieldamount')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="act-payment-amount" name="paymentAmount" type="number" min="0" step="0.01" required value="' + escHtml(amountVal) + '" placeholder="0.00">' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="act-payment-type">' + escHtml(t('act.modal.fieldtype')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
-                '<select class="form-control" id="act-payment-type" name="paymentType" required>' + typeOptions + '</select>' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="act-remaining">' + escHtml(t('act.modal.fieldremaining')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="act-remaining" name="remaining" type="number" min="0" step="0.01" required value="' + escHtml(remainVal) + '" placeholder="0.00">' +
-              '</div>' +
+
             '</div>' +
           '</form>' +
         '</div>' +
@@ -961,15 +1099,19 @@
       var form = overlay.querySelector('#activity-form');
       if (!form.checkValidity()) { form.reportValidity(); return; }
       var data = {
-        title: form.elements['title'].value.trim(),
-        date: form.elements['date'].value,
-        category: form.elements['category'].value,
-        status: form.elements['status'].value,
-        contractor: form.elements['contractor'].value.trim(),
-        notes: form.elements['notes'].value.trim(),
+        title:         form.elements['title'].value.trim(),
+        date:          form.elements['date'].value,
+        category:      form.elements['category'].value,
+        status:        form.elements['status'].value,
+        contractor:    form.elements['contractor'].value.trim(),
+        notes:         form.elements['notes'].value.trim(),
         paymentAmount: parseFloat(form.elements['paymentAmount'].value) || 0,
-        paymentType: form.elements['paymentType'].value,
-        remaining: parseFloat(form.elements['remaining'].value) || 0
+        paymentType:   form.elements['paymentType'].value,
+        remaining:     parseFloat(form.elements['remaining'].value) || 0,
+        whoPaid:       form.elements['whoPaid'].value.trim(),
+        supplier:      form.elements['supplier'].value.trim(),
+        invoiceRef:    form.elements['invoiceRef'].value.trim(),
+        currency:      form.elements['currency'].value.trim()
       };
       if (editing) {
         DB.updateActivity(id, data, (state.currentUser||{}).id);

@@ -1043,3 +1043,143 @@ hr { border: none; border-top: 1px solid var(--ico-border); margin: 1rem 0; }
   .settings-cards { grid-template-columns: 1fr; }
   .filter-date { flex: 1 1 140px; }
 }
+
+
+/* ============================================================
+   ACTIVITIES – Compact list row
+   ============================================================ */
+.act-list { display: flex; flex-direction: column; gap: 8px; padding: 1rem; }
+
+.act-row.compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--ico-radius);
+  background: var(--ico-surface);
+  box-shadow: var(--ico-shadow);
+  border: 1px solid var(--ico-border);
+}
+
+.act-row-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.act-row-date {
+  flex: 0 0 80px;
+  font-size: .82rem;
+  color: var(--ico-text-muted);
+}
+
+.act-row-title-btn {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--ico-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.act-row-title-btn:hover { color: var(--ico-primary-light); text-decoration: underline; }
+
+.act-row-amount {
+  font-weight: 700;
+  color: var(--ico-accent);
+  font-size: .88rem;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.act-row-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* Inline action buttons */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1.5px solid var(--ico-border);
+  background: transparent;
+  cursor: pointer;
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--ico-text-muted);
+  transition: background var(--transition), border-color var(--transition);
+  font-family: inherit;
+}
+.action-btn:hover { background: var(--ico-bg); border-color: var(--ico-primary-light); }
+.action-btn.delete { color: var(--ico-danger); border-color: transparent; }
+.action-btn.delete:hover { background: #fee2e2; border-color: var(--ico-danger); }
+
+/* Emoji (mobile) vs text label (desktop) toggle */
+.action-btn .emoji { display: none; font-size: 15px; line-height: 1; }
+.action-btn .label { display: inline; }
+
+@media (max-width: 899px) {
+  .action-btn .emoji { display: inline; }
+  .action-btn .label { display: none; }
+  .act-row-date { flex: 0 0 64px; font-size: .78rem; }
+  .act-row-title-btn { font-size: .88rem; }
+  .act-row.compact { padding: 10px 8px; }
+  .act-row-amount { font-size: .82rem; }
+}
+@media (min-width: 900px) {
+  .action-btn .emoji { display: none; }
+  .action-btn .label { display: inline; }
+}
+
+/* ============================================================
+   ACTIVITIES – Detail modal grid
+   ============================================================ */
+.act-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+@media (max-width: 599px) {
+  .act-detail-grid { grid-template-columns: 1fr; }
+}
+.act-detail-field { display: flex; flex-direction: column; gap: 3px; }
+.act-detail-label {
+  font-size: .73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ico-text-muted);
+}
+.act-detail-value { font-size: .93rem; color: var(--ico-text); word-break: break-word; }
+.act-detail-notes { grid-column: 1 / -1; }
+
+/* ============================================================
+   ACTIVITIES – Reflowed activity form
+   ============================================================ */
+.activity-form .form-section-label {
+  font-size: .73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ico-text-muted);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ico-border);
+  margin: 12px 0 8px;
+  grid-column: 1 / -1;
+}
+.activity-form textarea.form-control { min-height: 88px; resize: vertical; }
