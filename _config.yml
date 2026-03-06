@@ -1,0 +1,7 @@
+title: ICO Renovation Reporting
+description: Innovation Creation Opportunities – Renovation tracking app
+exclude:
+  - README.md
+  - "*.sh"
+include:
+  - assets
