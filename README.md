@@ -125,18 +125,37 @@ Open the browser console after loading the app.  You should see:
 [ICO:ActivityService] Loaded N activities from Supabase.
 ```
 
-### 5. Supabase Auth (email / password) – optional next step
+### 5. Enable Supabase Auth
 
-The current implementation stores and retrieves profiles directly from the
-`profiles` table without Supabase Auth credentials.  To add email / password
-authentication:
+1. In your Supabase project go to **Authentication → Providers** and enable the **Email** provider.
+2. (Optional) Under **Authentication → Settings** you can disable "Confirm email" during development
+   so accounts work immediately without an inbox confirmation step.
+3. Run the auth migration in the SQL Editor:
 
-1. Enable **Email** provider in Supabase → Authentication → Providers.
-2. Extend `supabaseAuthService.js` `create()` to call  
-   `supabase.auth.signUp({ email, password })` and set the profile `id` equal to  
-   the returned auth UID so that RLS policies using `auth.uid()` work correctly.
-3. Add an email / password sign-in form (or adapt the existing profile picker)  
-   to call `supabase.auth.signInWithPassword({ email, password })`.
+```
+migrations/sql/2026-03-07-add-auth-user-id.sql
+```
+
+This adds `auth_user_id` and `display_name` columns to `profiles` and tightens the RLS policies so
+that every write is scoped to the signed-in user.
+
+4. Set your Supabase credentials in `assets/js/config.js` (see step 3 above).
+
+The app then automatically shows an email / password **Sign In / Sign Up** screen instead of the
+local profile picker.  On first sign-in a profile row is created automatically (the auth UID is
+used as the profile `id` so RLS policies work without extra joins).
+
+#### Auth flow summary
+
+| Step | What happens |
+|---|---|
+| Sign Up | `supabase.auth.signUp` → profile row created with `id = auth.uid()` |
+| Sign In | `supabase.auth.signInWithPassword` → profile looked up by `auth_user_id` or `id` |
+| Refresh | `supabase.auth.getSession` on page load → session restored, profile loaded |
+| Sign Out | `supabase.auth.signOut` → state cleared, auth screen shown |
+
+> **Email confirmation**: if your project requires email confirmation, the user will see a
+> "Check your email" message after signing up.  They must confirm before they can sign in.
 
 ---
 
@@ -188,4 +207,4 @@ bundle exec jekyll serve
 
 To run **without** Supabase (local-first mode), leave `SUPABASE_URL` and
 `SUPABASE_ANON_KEY` empty in `assets/js/config.js`.  All data will be stored in
-`localStorage` as before.
+`localStorage` and the original profile-picker sign-in screen is shown.

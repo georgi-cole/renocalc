@@ -182,7 +182,24 @@
       'set.resetdone': 'App data has been reset to demo data',
       'common.close': 'Close',
       'common.select': '— Select —',
-      'login.profilecreated': 'Profile "{name}" created'
+      'login.profilecreated': 'Profile "{name}" created',
+      'auth.signin': 'Sign In',
+      'auth.signup': 'Sign Up',
+      'auth.email': 'Email',
+      'auth.email.placeholder': 'you@example.com',
+      'auth.password': 'Password',
+      'auth.password.placeholder': 'Your password',
+      'auth.password.new.placeholder': 'Min 8 characters',
+      'auth.displayname': 'Your Name',
+      'auth.displayname.placeholder': 'Your full name',
+      'auth.signinbtn': 'Sign In',
+      'auth.signupbtn': 'Create Account',
+      'auth.errInvalidCredentials': 'Invalid email or password.',
+      'auth.errGeneric': 'Authentication failed. Please try again.',
+      'auth.signupConfirm': 'Account created! Check your email to confirm, then sign in.',
+      'set.storageval.cloud': 'Cloud (Supabase)',
+      'set.cloudsync.active': 'Cloud Sync',
+      'set.cloudsync.activedesc': 'Your data is synced to Supabase cloud storage. Authenticated access only.'
     },
     bg: {
       'brand.tagline': 'Ремонтни дейности',
@@ -355,7 +372,24 @@
       'set.resetdone': 'Данните на приложението са нулирани към демо данните',
       'common.close': 'Затвори',
       'common.select': '— Избери —',
-      'login.profilecreated': 'Профилът "{name}" е създаден'
+      'login.profilecreated': 'Профилът "{name}" е създаден',
+      'auth.signin': 'Вход',
+      'auth.signup': 'Регистрация',
+      'auth.email': 'Имейл',
+      'auth.email.placeholder': 'вие@пример.com',
+      'auth.password': 'Парола',
+      'auth.password.placeholder': 'Вашата парола',
+      'auth.password.new.placeholder': 'Мин. 8 символа',
+      'auth.displayname': 'Вашето Име',
+      'auth.displayname.placeholder': 'Пълно Име',
+      'auth.signinbtn': 'Влез',
+      'auth.signupbtn': 'Създай акаунт',
+      'auth.errInvalidCredentials': 'Невалиден имейл или парола.',
+      'auth.errGeneric': 'Удостоверяването е неуспешно. Моля, опитайте отново.',
+      'auth.signupConfirm': 'Акаунтът е създаден! Проверете имейла си за потвърждение.',
+      'set.storageval.cloud': 'Облак (Supabase)',
+      'set.cloudsync.active': 'Облачна синхронизация',
+      'set.cloudsync.activedesc': 'Данните ви се синхронизират с Supabase облачното хранилище.'
     }
   };
 
@@ -559,7 +593,18 @@
     initApp();
   }
 
-  /* ── New Profile Form ────────────────────────────────────── */
+  /* ── Auth Screen (Supabase mode) ────────────────────────── */
+  function showAuthScreen() {
+    var screen = document.getElementById('auth-screen');
+    var app    = document.getElementById('app');
+    if (!screen) { showProfileScreen(); return; } // graceful fallback
+    document.getElementById('profile-screen').classList.add('hidden');
+    screen.classList.remove('hidden');
+    app.classList.add('hidden');
+    applyTranslations();
+  }
+
+  /* ── New Profile Form (local mode) ──────────────────────── */
   function initProfileForm() {
     var form = document.getElementById('new-profile-form');
     if (!form) return;
@@ -585,6 +630,83 @@
         state.lang = lang;
         try { localStorage.setItem('ico_lang', lang); } catch (e) { /* ignore */ }
         applyTranslations();
+      });
+    });
+  }
+
+  /* ── Auth Form (Supabase mode) ───────────────────────────── */
+  function initAuthForm() {
+    var signinForm  = document.getElementById('signin-form');
+    var signupForm  = document.getElementById('signup-form');
+    var signinError = document.getElementById('signin-error');
+    var signupError = document.getElementById('signup-error');
+    if (!signinForm || !signupForm) return;
+
+    // Tab switching
+    document.querySelectorAll('.auth-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.getAttribute('data-auth-tab');
+        document.querySelectorAll('.auth-tab').forEach(function (t) {
+          var isActive = t.getAttribute('data-auth-tab') === target;
+          t.classList.toggle('active', isActive);
+          t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        signinForm.classList.toggle('hidden', target !== 'signin');
+        signupForm.classList.toggle('hidden', target !== 'signup');
+        // Clear any displayed errors when switching tabs
+        signinError.classList.add('hidden');
+        signupError.classList.add('hidden');
+      });
+    });
+
+    // Sign In
+    signinForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email    = signinForm.elements['email'].value.trim();
+      var password = signinForm.elements['password'].value;
+      signinError.classList.add('hidden');
+      signinError.textContent = '';
+      var submitBtn = signinForm.querySelector('[type="submit"]');
+      submitBtn.disabled = true;
+      ICO.SupabaseAuth.signIn(email, password).then(function (result) {
+        submitBtn.disabled = false;
+        if (result.error) {
+          signinError.textContent = t('auth.errInvalidCredentials') || result.error.message;
+          signinError.classList.remove('hidden');
+          signinError.className = signinError.className.replace(' auth-info', '');
+        } else {
+          document.getElementById('auth-screen').classList.add('hidden');
+          loginAs(result.profile);
+        }
+      });
+    });
+
+    // Sign Up
+    signupForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var displayName = signupForm.elements['displayName'].value.trim();
+      var email       = signupForm.elements['email'].value.trim();
+      var password    = signupForm.elements['password'].value;
+      signupError.classList.add('hidden');
+      signupError.textContent = '';
+      var submitBtn = signupForm.querySelector('[type="submit"]');
+      submitBtn.disabled = true;
+      ICO.SupabaseAuth.signUp(email, password, displayName).then(function (result) {
+        submitBtn.disabled = false;
+        if (result.error) {
+          signupError.textContent = t('auth.errGeneric') || result.error.message;
+          signupError.classList.remove('hidden');
+          signupError.className = signupError.className.replace(' auth-info', '');
+        } else if (result.confirmEmail) {
+          // Email confirmation required – show info message, do not navigate
+          signupError.textContent = t('auth.signupConfirm');
+          signupError.className = 'auth-error auth-info';
+          signupError.classList.remove('hidden');
+          signupForm.reset();
+        } else {
+          document.getElementById('auth-screen').classList.add('hidden');
+          loginAs(result.profile);
+        }
       });
     });
   }
@@ -641,7 +763,11 @@
         }
         state.currentUser = null;
         document.getElementById('app').classList.add('hidden');
-        showProfileScreen();
+        if (ICO.SupabaseAuth) {
+          ICO.SupabaseAuth.signOut().then(function () { showAuthScreen(); });
+        } else {
+          showProfileScreen();
+        }
       });
     });
   }
@@ -1542,7 +1668,7 @@
               '<dl class="detail-grid">' +
                 '<dt>App Name</dt><dd><strong>' + escHtml(t('set.appname')) + '</strong></dd>' +
                 '<dt>' + escHtml(t('set.version')) + '</dt><dd>' + escHtml(APP_VERSION) + '</dd>' +
-                '<dt>' + escHtml(t('set.storage')) + '</dt><dd>' + escHtml(t('set.storageval')) + '</dd>' +
+                '<dt>' + escHtml(t('set.storage')) + '</dt><dd>' + escHtml(ICO.SupabaseClient ? t('set.storageval.cloud') : t('set.storageval')) + '</dd>' +
                 '<dt>' + escHtml(t('set.activities')) + '</dt><dd>' + DB.getActivities().length + ' ' + escHtml(t('set.records')) + '</dd>' +
                 '<dt>' + escHtml(t('set.auditentries')) + '</dt><dd>' + DB.getAuditLog().length + ' ' + escHtml(t('set.entries')) + '</dd>' +
               '</dl>' +
@@ -1551,14 +1677,20 @@
         '</div>' +
 
         '<div class="settings-section">' +
-          '<h2 class="settings-section-title">' + escHtml(t('set.cloudsync')) + ' <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span></h2>' +
+          '<h2 class="settings-section-title">' + escHtml(t('set.cloudsync.active')) +
+            (ICO.SupabaseClient
+              ? ' <span class="badge badge-success" style="vertical-align:middle">Active</span>'
+              : ' <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span>') +
+          '</h2>' +
           '<div class="card">' +
             '<div class="card-body">' +
-              '<div class="empty-state" style="padding:1.5rem">' +
-                '<div class="empty-icon">\u2601\ufe0f</div>' +
-                '<h3>Supabase Integration</h3>' +
-                '<p>' + escHtml(t('set.clouddesc')) + '</p>' +
-              '</div>' +
+              (ICO.SupabaseClient
+                ? '<p style="font-size:.9rem">' + escHtml(t('set.cloudsync.activedesc')) + '</p>'
+                : '<div class="empty-state" style="padding:1.5rem">' +
+                    '<div class="empty-icon">\u2601\ufe0f</div>' +
+                    '<h3>Supabase Integration</h3>' +
+                    '<p>' + escHtml(t('set.clouddesc')) + '</p>' +
+                  '</div>') +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -1612,11 +1744,49 @@
       if (savedLang && TRANSLATIONS[savedLang]) state.lang = savedLang;
     } catch (e) { /* ignore */ }
 
+    // Always initialise the local profile form so its lang buttons work
+    // (they use document.querySelectorAll('.lang-btn') which covers both
+    // the profile screen and the auth screen).
     initProfileForm();
 
-    runSplash(function () {
-      showProfileScreen();
-    });
+    if (ICO.SupabaseAuth) {
+      // ── Supabase Auth mode ──────────────────────────────────────────────
+      initAuthForm();
+
+      // React to external auth state changes (e.g. session expiry, sign-out
+      // from another tab, token refresh).
+      ICO.SupabaseAuth.onAuthStateChange(function (event, session) {
+        if (event === 'SIGNED_OUT') {
+          if (state.currentUser) {
+            state.currentUser = null;
+            document.getElementById('app').classList.add('hidden');
+            showAuthScreen();
+          }
+        }
+        // TOKEN_REFRESHED: session stays valid – nothing to do here.
+      });
+
+      runSplash(function () {
+        // Restore existing session on page load.
+        ICO.SupabaseAuth.getSession().then(function (session) {
+          if (session) {
+            ICO.SupabaseAuth.handleSession(session)
+              .then(function (profile) { loginAs(profile); })
+              .catch(function (err) {
+                console.error('[ICO] Session restore failed:', err);
+                showAuthScreen();
+              });
+          } else {
+            showAuthScreen();
+          }
+        });
+      });
+    } else {
+      // ── Local / demo mode ───────────────────────────────────────────────
+      runSplash(function () {
+        showProfileScreen();
+      });
+    }
   });
 
 })();

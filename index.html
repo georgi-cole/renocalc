@@ -23,7 +23,7 @@
 
 
   <!-- ════════════════════════════════════════════
-       PROFILE / AUTH SCREEN
+       PROFILE / AUTH SCREEN  (local / fallback mode)
        ════════════════════════════════════════════ -->
   <div id="profile-screen" class="hidden">
     <div class="profile-card">
@@ -54,6 +54,67 @@
           <input class="form-control" id="prole" name="prole" type="text" data-i18n-placeholder="login.role.placeholder" placeholder="e.g. Project Manager" autocomplete="organization-title">
         </div>
         <button type="submit" class="btn btn-outline btn-full" data-i18n="login.createbtn">Create Profile &amp; Sign In</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       AUTH SCREEN  (Supabase email/password mode)
+       ════════════════════════════════════════════ -->
+  <div id="auth-screen" class="hidden">
+    <div class="profile-card">
+      <div class="lang-selector">
+        <button class="lang-btn active" data-lang="en" aria-label="English">🇺🇸</button>
+        <button class="lang-btn" data-lang="bg" aria-label="Bulgarian">🇧🇬</button>
+      </div>
+
+      <div class="profile-brand">
+        <div class="brand-mark"><span>I</span>CO</div>
+        <p data-i18n="brand.tagline">Renovation Reporting</p>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" data-auth-tab="signin" role="tab" aria-selected="true" data-i18n="auth.signin">Sign In</button>
+        <button class="auth-tab" data-auth-tab="signup" role="tab" aria-selected="false" data-i18n="auth.signup">Sign Up</button>
+      </div>
+
+      <!-- Sign In form -->
+      <form class="auth-form" id="signin-form" novalidate>
+        <div class="form-group">
+          <label for="signin-email" data-i18n="auth.email">Email</label>
+          <input class="form-control" id="signin-email" name="email" type="email" autocomplete="email" required
+            data-i18n-placeholder="auth.email.placeholder" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="signin-password" data-i18n="auth.password">Password</label>
+          <input class="form-control" id="signin-password" name="password" type="password" autocomplete="current-password" required
+            data-i18n-placeholder="auth.password.placeholder" placeholder="Your password">
+        </div>
+        <div class="auth-error hidden" id="signin-error" role="alert"></div>
+        <button type="submit" class="btn btn-primary btn-full" data-i18n="auth.signinbtn">Sign In</button>
+      </form>
+
+      <!-- Sign Up form -->
+      <form class="auth-form hidden" id="signup-form" novalidate>
+        <div class="form-group">
+          <label for="signup-name" data-i18n="auth.displayname">Your Name</label>
+          <input class="form-control" id="signup-name" name="displayName" type="text" autocomplete="name" required
+            data-i18n-placeholder="auth.displayname.placeholder" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="signup-email" data-i18n="auth.email">Email</label>
+          <input class="form-control" id="signup-email" name="email" type="email" autocomplete="email" required
+            data-i18n-placeholder="auth.email.placeholder" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="signup-password" data-i18n="auth.password">Password</label>
+          <input class="form-control" id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="8"
+            data-i18n-placeholder="auth.password.new.placeholder" placeholder="Min 8 characters">
+        </div>
+        <div class="auth-error hidden" id="signup-error" role="alert"></div>
+        <button type="submit" class="btn btn-primary btn-full" data-i18n="auth.signupbtn">Create Account</button>
       </form>
     </div>
   </div>
