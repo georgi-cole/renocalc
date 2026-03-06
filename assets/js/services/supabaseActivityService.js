@@ -6,7 +6,7 @@
  * loaded earlier if no Supabase client exists.
  *
  * Table: activities
- *   id             uuid primary key default gen_random_uuid()
+ *   id             text primary key default gen_random_uuid()::text
  *   date           date
  *   title          text not null
  *   category       text
