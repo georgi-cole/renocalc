@@ -27,28 +27,33 @@
        ════════════════════════════════════════════ -->
   <div id="profile-screen" class="hidden">
     <div class="profile-card">
-      <div class="profile-brand">
-        <div class="brand-mark"><span>I</span>CO</div>
-        <p>Renovation Reporting</p>
+      <div class="lang-selector" id="lang-selector">
+        <button class="lang-btn active" data-lang="en" aria-label="English">🇺🇸</button>
+        <button class="lang-btn" data-lang="bg" aria-label="Bulgarian">🇧🇬</button>
       </div>
 
-      <p class="text-muted mb-2" style="font-size:.88rem;text-align:center">Select your profile to continue</p>
+      <div class="profile-brand">
+        <div class="brand-mark"><span>I</span>CO</div>
+        <p data-i18n="brand.tagline">Renovation Reporting</p>
+      </div>
+
+      <p class="text-muted mb-2" style="font-size:.88rem;text-align:center" data-i18n="login.select">Select your profile to continue</p>
       <div class="profile-list" id="profile-list">
         <!-- rendered by JS -->
       </div>
 
-      <div class="profile-divider">or create a new profile</div>
+      <div class="profile-divider" data-i18n="login.or">or create a new profile</div>
 
       <form class="new-profile-form" id="new-profile-form" novalidate>
         <div class="form-group">
-          <label for="pname">Full Name</label>
-          <input class="form-control" id="pname" name="pname" type="text" placeholder="Your full name" required autocomplete="name">
+          <label for="pname" data-i18n="login.fullname">Full Name</label>
+          <input class="form-control" id="pname" name="pname" type="text" data-i18n-placeholder="login.fullname.placeholder" placeholder="Your full name" required autocomplete="name">
         </div>
         <div class="form-group">
-          <label for="prole">Role <span class="text-muted">(optional)</span></label>
-          <input class="form-control" id="prole" name="prole" type="text" placeholder="e.g. Project Manager" autocomplete="organization-title">
+          <label for="prole"><span data-i18n="login.role">Role</span> <span class="text-muted">(<span data-i18n="login.optional">optional</span>)</span></label>
+          <input class="form-control" id="prole" name="prole" type="text" data-i18n-placeholder="login.role.placeholder" placeholder="e.g. Project Manager" autocomplete="organization-title">
         </div>
-        <button type="submit" class="btn btn-outline btn-full">Create Profile &amp; Sign In</button>
+        <button type="submit" class="btn btn-outline btn-full" data-i18n="login.createbtn">Create Profile &amp; Sign In</button>
       </form>
     </div>
   </div>
@@ -78,46 +83,41 @@
       </div>
 
       <div class="sidebar-nav">
-        <div class="nav-section-label">Main</div>
+        <div class="nav-section-label" data-i18n="nav.section.main">Main</div>
 
         <button class="nav-item active" data-nav="dashboard" aria-current="page">
           <span class="nav-icon" aria-hidden="true">🏠</span>
-          Dashboard
+          <span data-i18n="nav.dashboard">Dashboard</span>
         </button>
 
         <button class="nav-item" data-nav="activities">
           <span class="nav-icon" aria-hidden="true">🔨</span>
-          Activities
+          <span data-i18n="nav.activities">Activities</span>
         </button>
 
-        <button class="nav-item" data-nav="payments">
-          <span class="nav-icon" aria-hidden="true">💳</span>
-          Payments
-        </button>
-
-        <div class="nav-section-label">Insights</div>
+        <div class="nav-section-label" data-i18n="nav.section.insights">Insights</div>
 
         <button class="nav-item" data-nav="reports">
           <span class="nav-icon" aria-hidden="true">📊</span>
-          Reports
+          <span data-i18n="nav.reports">Reports</span>
         </button>
 
         <button class="nav-item" data-nav="auditlog">
           <span class="nav-icon" aria-hidden="true">📜</span>
-          Audit Log
+          <span data-i18n="nav.auditlog">Audit Log</span>
         </button>
 
-        <div class="nav-section-label">App</div>
+        <div class="nav-section-label" data-i18n="nav.section.app">App</div>
 
         <button class="nav-item" data-nav="settings">
           <span class="nav-icon" aria-hidden="true">⚙️</span>
-          Settings
+          <span data-i18n="nav.settings">Settings</span>
         </button>
       </div>
 
       <div class="sidebar-footer">
         <button data-action="logout" aria-label="Sign out">
-          <span aria-hidden="true">🚪</span> Sign Out
+          <span aria-hidden="true">🚪</span> <span data-i18n="nav.signout">Sign Out</span>
         </button>
       </div>
     </nav>
@@ -145,27 +145,23 @@
     <nav class="bottom-nav" role="navigation" aria-label="Bottom navigation">
       <button class="bottom-nav-item active" data-nav="dashboard">
         <span class="nav-icon" aria-hidden="true">🏠</span>
-        <span>Home</span>
+        <span data-i18n="nav.home">Home</span>
       </button>
       <button class="bottom-nav-item" data-nav="activities">
         <span class="nav-icon" aria-hidden="true">🔨</span>
-        <span>Activities</span>
-      </button>
-      <button class="bottom-nav-item" data-nav="payments">
-        <span class="nav-icon" aria-hidden="true">💳</span>
-        <span>Payments</span>
+        <span data-i18n="nav.activities">Activities</span>
       </button>
       <button class="bottom-nav-item" data-nav="reports">
         <span class="nav-icon" aria-hidden="true">📊</span>
-        <span>Reports</span>
+        <span data-i18n="nav.reports">Reports</span>
       </button>
       <button class="bottom-nav-item" data-nav="auditlog">
         <span class="nav-icon" aria-hidden="true">📜</span>
-        <span>Log</span>
+        <span data-i18n="nav.log">Log</span>
       </button>
       <button class="bottom-nav-item" data-nav="settings">
         <span class="nav-icon" aria-hidden="true">⚙️</span>
-        <span>Settings</span>
+        <span data-i18n="nav.settings">Settings</span>
       </button>
     </nav>
 
