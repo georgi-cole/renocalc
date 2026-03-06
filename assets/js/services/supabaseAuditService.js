@@ -142,15 +142,18 @@
      * Overwrite cache and sync to Supabase (used by ReportService.importAll).
      * Upserts all entries so existing rows are not duplicated.
      */
+    * Upserts all entries so existing rows are not duplicated.
+    */
     _import: function (list) {
-      _cache = list;
-      if (!list || !list.length) { return; }
-      var rows = list.map(_toRow);
-      sb.from(TABLE).upsert(rows).then(function (res) {
-        if (res.error) {
-          console.error('[ICO:AuditService] Import upsert error:', res.error.message);
-        }
-      });
+     // Ensure cache always remains an array, even if list is null/undefined.
+     _cache = list || [];
+     if (!_cache.length) { return; }
+     var rows = _cache.map(_toRow);
+     sb.from(TABLE).upsert(rows).then(function (res) {
+       if (res.error) {
+         console.error('[ICO:AuditService] Import upsert error:', res.error.message);
+       }
+     });
     }
   };
 
