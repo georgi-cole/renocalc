@@ -852,23 +852,15 @@
           ? escHtml(fmt.currency(a.paymentAmount))
           : '<span class="text-muted">\u2014</span>';
         return '<div class="act-row compact">' +
-          '<div class="act-row-left">' +
-            '<span class="act-row-date">' + escHtml(fmt.date(a.date)) + '</span>' +
-            '<button class="act-row-title-btn" data-action="open" data-act-id="' + escHtml(a.id) + '" title="' + escHtml(t('act.detail.title')) + '">' +
-              escHtml(a.title) +
-            '</button>' +
-          '</div>' +
+          '<span class="act-row-date">' + escHtml(fmt.date(a.date)) + '</span>' +
+          '<button class="act-row-title-btn" data-action="open" data-act-id="' + escHtml(a.id) + '" title="' + escHtml(t('act.detail.title')) + '">' +
+            escHtml(a.title) +
+          '</button>' +
           '<span class="act-row-amount">' + amtHtml + '</span>' +
-          '<div class="act-row-actions">' +
-            '<button class="action-btn ghost" data-action="edit" data-act-id="' + escHtml(a.id) + '" aria-label="' + escHtml(t('act.edit')) + '">' +
-              '<span class="emoji" aria-hidden="true">✏️</span>' +
-              '<span class="label">' + escHtml(t('act.edit')) + '</span>' +
-            '</button>' +
-            '<button class="action-btn delete" data-action="delete" data-act-id="' + escHtml(a.id) + '" aria-label="' + escHtml(t('act.del')) + '">' +
-              '<span class="emoji" aria-hidden="true">🗑️</span>' +
-              '<span class="label">' + escHtml(t('act.del')) + '</span>' +
-            '</button>' +
-          '</div>' +
+          '<button class="action-btn delete" data-action="delete" data-act-id="' + escHtml(a.id) + '" aria-label="' + escHtml(t('act.del')) + '">' +
+            '<span class="emoji" aria-hidden="true">🗑️</span>' +
+            '<span class="label">' + escHtml(t('act.del')) + '</span>' +
+          '</button>' +
         '</div>';
       }).join('') +
       '</div></div>';
@@ -1040,7 +1032,7 @@
               '</div>' +
               '<div class="form-group">' +
                 '<label for="act-currency">' + escHtml(t('act.modal.fieldcurrency')) + '</label>' +
-                '<input class="form-control" id="act-currency" name="currency" value="' + escHtml((editing||{}).currency||'') + '" placeholder="e.g. GBP">' +
+                '<input class="form-control" id="act-currency" name="currency" value="' + escHtml((editing||{}).currency||'EUR') + '" placeholder="e.g. EUR">' +
               '</div>' +
 
               /* Row: status + who paid */
