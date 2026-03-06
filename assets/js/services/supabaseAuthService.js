@@ -6,7 +6,7 @@
  * loaded earlier if no Supabase client exists.
  *
  * Table: profiles
- *   id         uuid primary key default gen_random_uuid()
+ *   id         text primary key default gen_random_uuid()::text
  *   name       text not null
  *   initials   text
  *   role       text
