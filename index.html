@@ -47,11 +47,11 @@
       <form class="new-profile-form" id="new-profile-form" novalidate>
         <div class="form-group">
           <label for="pname" data-i18n="login.fullname">Full Name</label>
-          <input class="form-control" id="pname" name="pname" type="text" placeholder="Your full name" required autocomplete="name">
+          <input class="form-control" id="pname" name="pname" type="text" data-i18n-placeholder="login.fullname.placeholder" placeholder="Your full name" required autocomplete="name">
         </div>
         <div class="form-group">
           <label for="prole"><span data-i18n="login.role">Role</span> <span class="text-muted">(<span data-i18n="login.optional">optional</span>)</span></label>
-          <input class="form-control" id="prole" name="prole" type="text" placeholder="e.g. Project Manager" autocomplete="organization-title">
+          <input class="form-control" id="prole" name="prole" type="text" data-i18n-placeholder="login.role.placeholder" placeholder="e.g. Project Manager" autocomplete="organization-title">
         </div>
         <button type="submit" class="btn btn-outline btn-full" data-i18n="login.createbtn">Create Profile &amp; Sign In</button>
       </form>

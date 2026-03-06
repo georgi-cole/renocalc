@@ -28,7 +28,9 @@
       'login.select': 'Select your profile to continue',
       'login.or': 'or create a new profile',
       'login.fullname': 'Full Name',
+      'login.fullname.placeholder': 'Your full name',
       'login.role': 'Role',
+      'login.role.placeholder': 'e.g. Project Manager',
       'login.optional': 'optional',
       'login.createbtn': 'Create Profile & Sign In',
       'dash.title': 'Dashboard',
@@ -144,7 +146,7 @@
       'set.subtitle': 'Manage your data and app preferences',
       'set.datamgmt': 'Data Management',
       'set.export': 'Export Data',
-      'set.exportdesc': 'Download all your data (activities, audit log) as a JSON file for backup or transfer.',
+      'set.exportdesc': 'Download all your data as a JSON file for backup or transfer.',
       'set.exportbtn': 'Export as JSON',
       'set.import': 'Import Data',
       'set.importdesc': 'Import data from a previously exported JSON file. This will overwrite the matching data.',
@@ -169,7 +171,8 @@
       'set.confirmreset': 'Reset ALL data to the original demo data? This cannot be undone.',
       'set.resetdone': 'App data has been reset to demo data',
       'common.close': 'Close',
-      'common.select': '— Select —'
+      'common.select': '— Select —',
+      'login.profilecreated': 'Profile "{name}" created'
     },
     bg: {
       'brand.tagline': 'Ремонтни дейности',
@@ -188,7 +191,9 @@
       'login.select': 'Изберете вашия профил за вход',
       'login.or': 'или създайте нов профил',
       'login.fullname': 'Пълно име',
+      'login.fullname.placeholder': 'Вашето пълно име',
       'login.role': 'Роля',
+      'login.role.placeholder': 'напр. Ръководител на проект',
       'login.optional': 'по избор',
       'login.createbtn': 'Създай профил и влез',
       'dash.title': 'Табло',
@@ -304,7 +309,7 @@
       'set.subtitle': 'Управлявайте данните и настройките на приложението',
       'set.datamgmt': 'Управление на данни',
       'set.export': 'Експорт на данни',
-      'set.exportdesc': 'Изтеглете всички данни (дейности, журнал) като JSON файл за резервно копие.',
+      'set.exportdesc': 'Изтеглете всички данни като JSON файл за резервно копие.',
       'set.exportbtn': 'Експорт като JSON',
       'set.import': 'Импорт на данни',
       'set.importdesc': 'Импортирайте данни от предварително експортиран JSON файл. Това ще замени съответстващите данни.',
@@ -329,7 +334,8 @@
       'set.confirmreset': 'Нулиране на ВСИЧКИ данни към оригиналните демо данни? Това не може да бъде отменено.',
       'set.resetdone': 'Данните на приложението са нулирани към демо данните',
       'common.close': 'Затвори',
-      'common.select': '— Избери —'
+      'common.select': '— Избери —',
+      'login.profilecreated': 'Профилът "{name}" е създаден'
     }
   };
 
@@ -344,9 +350,12 @@
   /* ── Translation helper ──────────────────────────────────── */
   function t(key, params) {
     var lang = state.lang || 'en';
-    var str = (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) ||
-              (TRANSLATIONS['en'] && TRANSLATIONS['en'][key]) || key;
-    if (params) {
+    var langVal = TRANSLATIONS[lang] && TRANSLATIONS[lang][key];
+    var enVal   = TRANSLATIONS['en']  && TRANSLATIONS['en'][key];
+    var str = (typeof langVal !== 'undefined') ? langVal
+            : (typeof enVal  !== 'undefined') ? enVal
+            : '';
+    if (params && str) {
       Object.keys(params).forEach(function (k) {
         str = str.replace('{' + k + '}', params[k]);
       });
@@ -362,10 +371,16 @@
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
       el.innerHTML = t(el.getAttribute('data-i18n-html'));
     });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var val = t(el.getAttribute('data-i18n-placeholder'));
+      if (val) el.placeholder = val;
+    });
     // Update lang buttons active state
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === state.lang);
     });
+    // Update <html lang="..."> for screen readers
+    if (document.documentElement) document.documentElement.lang = state.lang;
   }
 
   /* ── Helpers ─────────────────────────────────────────────── */
@@ -540,7 +555,7 @@
       });
       form.reset();
       renderProfileList();
-      toast('Profile "' + name + '" created', 'success');
+      toast(t('login.profilecreated', { name: name }) || 'Profile "' + name + '" created', 'success');
     });
 
     // Language selector buttons
@@ -825,7 +840,7 @@
           '<td><strong>' + escHtml(a.title) + '</strong>' + (a.contractor ? '<br><small class="text-muted">' + escHtml(a.contractor) + '</small>' : '') + '</td>' +
           '<td><span class="badge badge-info">' + escHtml(t('cat.' + a.category)) + '</span></td>' +
           '<td>' + statusBadge(a.status) + '</td>' +
-          '<td>' + (a.paymentAmount ? escHtml(fmt.currency(a.paymentAmount)) : '<span class="text-muted">\u2014</span>') + '</td>' +
+          '<td>' + (a.paymentAmount != null ? escHtml(fmt.currency(a.paymentAmount)) : '<span class="text-muted">\u2014</span>') + '</td>' +
           '<td>' + (a.paymentType ? '<span class="badge badge-default">' + escHtml(methodLabel(a.paymentType)) + '</span>' : '<span class="text-muted">\u2014</span>') + '</td>' +
           '<td>' + (Number(a.remaining) > 0 ? '<span class="text-danger">' + escHtml(fmt.currency(a.remaining)) + '</span>' : escHtml(fmt.currency(a.remaining || 0))) + '</td>' +
           '<td class="actions-col">' +
@@ -1038,8 +1053,9 @@
       /* By payment type */
       var byType = {};
       acts.forEach(function(a){
-        if (!byType[a.paymentType]) byType[a.paymentType] = 0;
-        byType[a.paymentType] += Number(a.paymentAmount||0);
+        var type = a.paymentType || 'other';
+        if (!byType[type]) byType[type] = 0;
+        byType[type] += Number(a.paymentAmount||0);
       });
       var typeEntries = Object.keys(byType).map(function(k){ return [k, byType[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
       var totalAll = acts.reduce(function(s,a){ return s+Number(a.paymentAmount||0); }, 0);
