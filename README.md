@@ -155,9 +155,20 @@ import data from './export.json' assert { type: 'json' };
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-await sb.from('profiles').upsert(data.profiles);
-await sb.from('activities').upsert(data.activities);
-await sb.from('audit_logs').upsert(data.auditLog);
+// Helper: convert camelCase keys from the export into snake_case columns
+const toSnakeCase = (key) =>
+  key.replace(/([A-Z])/g, '_$1').toLowerCase();
+
+const mapRecordToSnakeCase = (record) =>
+  Object.fromEntries(
+    Object.entries(record).map(([k, v]) => [toSnakeCase(k), v]),
+  );
+
+const mapArrayToSnakeCase = (records = []) => records.map(mapRecordToSnakeCase);
+
+await sb.from('profiles').upsert(mapArrayToSnakeCase(data.profiles));
+await sb.from('activities').upsert(mapArrayToSnakeCase(data.activities));
+await sb.from('audit_logs').upsert(mapArrayToSnakeCase(data.auditLog));
 console.log('Import complete.');
 ```
 
