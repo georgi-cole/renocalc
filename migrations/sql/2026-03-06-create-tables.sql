@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS activities (
   payment_amount NUMERIC     NOT NULL DEFAULT 0,
   payment_type   TEXT,
   remaining      NUMERIC     NOT NULL DEFAULT 0,
-  currency       TEXT        NOT NULL DEFAULT 'GBP',
+  currency       TEXT        NOT NULL DEFAULT 'EUR',
   who_paid       TEXT,
   status         TEXT        NOT NULL DEFAULT 'pending'
                              CHECK (status IN ('pending','in_progress','completed','cancelled')),

@@ -31,12 +31,14 @@
   /* ── Display-format helpers ──────────────────────────────────── */
 
   var fmt = {
-    /** Format a number as a GBP currency string (e.g. £1,200.00). */
+    /** Format a number as a EUR currency string (e.g. €1,200.00). */
     currency: function (n) {
-      return '£' + Number(n || 0).toLocaleString('en-GB', {
+      return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency: 'EUR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-      });
+      }).format(Number(n || 0));
     },
 
     /** Format an ISO date string as a human-readable date (e.g. 1 Mar 2025). */

@@ -13,7 +13,7 @@
  *   payment_amount numeric default 0
  *   payment_type   text
  *   remaining      numeric default 0
- *   currency       text default 'GBP'
+ *   currency       text default 'EUR'
  *   who_paid       text
  *   status         text default 'pending'
  *   supplier       text
@@ -73,7 +73,7 @@
       paymentAmount: Number(row.payment_amount || 0),
       paymentType:   row.payment_type || '',
       remaining:     Number(row.remaining || 0),
-      currency:      row.currency    || 'GBP',
+      currency:      row.currency    || 'EUR',
       whoPaid:       row.who_paid    || '',
       notes:         row.notes       || '',
       createdAt:     row.created_at,
@@ -95,7 +95,7 @@
       payment_amount: Number(activity.paymentAmount || 0),
       payment_type:   activity.paymentType || '',
       remaining:      Number(activity.remaining || 0),
-      currency:       activity.currency    || 'GBP',
+      currency:       activity.currency    || 'EUR',
       who_paid:       activity.whoPaid     || '',
       notes:          activity.notes       || '',
       created_at:     activity.createdAt,
