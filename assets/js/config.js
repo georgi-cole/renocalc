@@ -28,10 +28,10 @@
     // ─────────────────────────────────────────────────────────────────────
 
     /** Your Supabase project URL (Phase 4). */
-    SUPABASE_URL: '',
+    SUPABASE_URL: 'https://ggbydhhstbtxhjkmbsju.supabase.co',
 
     /** Public anon key from Supabase dashboard → Settings → API (Phase 4). */
-    SUPABASE_ANON_KEY: ''
+    SUPABASE_ANON_KEY: 'sb_publishable_NZ4Rgcf4wWBVihU5-KE31Q_sOxFeZ19'
   };
 
 })(window);
