@@ -40,36 +40,36 @@
     {
       id: 'act_001', title: 'Kitchen Demolition',
       category: 'Demolition', date: '2025-03-01', status: 'completed',
-      responsible: 'profile_1', contractor: 'FastDemo Ltd',
-      description: 'Full kitchen strip-out including cabinets, tiles and old plumbing.',
+      contractor: 'FastDemo Ltd',
+      paymentAmount: 2400, paymentType: 'bank_transfer', remaining: 0,
       notes: 'Completed ahead of schedule.', createdAt: '2025-03-01T08:00:00.000Z', updatedAt: '2025-03-05T14:00:00.000Z'
     },
     {
       id: 'act_002', title: 'Bathroom Retiling',
       category: 'Tiling', date: '2025-03-08', status: 'in_progress',
-      responsible: 'profile_2', contractor: 'TilePro',
-      description: 'Replace all bathroom tiles with premium porcelain.',
+      contractor: 'TilePro',
+      paymentAmount: 800, paymentType: 'cash', remaining: 1200,
       notes: '', createdAt: '2025-03-06T10:00:00.000Z', updatedAt: '2025-03-06T10:00:00.000Z'
     },
     {
       id: 'act_003', title: 'Electrical Rewiring',
       category: 'Electrical', date: '2025-03-15', status: 'pending',
-      responsible: 'profile_1', contractor: 'Voltix Electrics',
-      description: 'Full rewiring of ground floor, new consumer unit.',
+      contractor: 'Voltix Electrics',
+      paymentAmount: 0, paymentType: 'bank_transfer', remaining: 3500,
       notes: 'Awaiting council permit.', createdAt: '2025-03-07T09:00:00.000Z', updatedAt: '2025-03-07T09:00:00.000Z'
     },
     {
       id: 'act_004', title: 'Flooring – Living Room',
       category: 'Flooring', date: '2025-03-20', status: 'pending',
-      responsible: 'profile_2', contractor: 'FloorZone',
-      description: 'Install engineered hardwood throughout the living room.',
+      contractor: 'FloorZone',
+      paymentAmount: 0, paymentType: 'cash', remaining: 0,
       notes: '', createdAt: '2025-03-07T10:00:00.000Z', updatedAt: '2025-03-07T10:00:00.000Z'
     },
     {
       id: 'act_005', title: 'Plastering & Skim Coat',
       category: 'Plastering', date: '2025-03-25', status: 'pending',
-      responsible: 'profile_1', contractor: 'SmoothWalls Co.',
-      description: 'Skim coat all walls, patch cracks.',
+      contractor: 'SmoothWalls Co.',
+      paymentAmount: 0, paymentType: 'cash', remaining: 0,
       notes: '', createdAt: '2025-03-07T10:30:00.000Z', updatedAt: '2025-03-07T10:30:00.000Z'
     }
   ];
@@ -225,20 +225,14 @@
     /* ----- Derived / Reporting ----- */
     getSummary: function () {
       var acts = DB.getActivities();
-      var pays = DB.getPayments();
-      var totalPaid = pays.filter(function (p) { return p.status === 'paid'; })
-                         .reduce(function (s, p) { return s + Number(p.amount); }, 0);
-      var totalPending = pays.filter(function (p) { return p.status === 'pending'; })
-                            .reduce(function (s, p) { return s + Number(p.amount); }, 0);
-      var totalRemaining = pays.reduce(function (s, p) { return s + Number(p.remaining || 0); }, 0);
+      var totalPaid      = acts.reduce(function (s, a) { return s + Number(a.paymentAmount || 0); }, 0);
+      var totalRemaining = acts.reduce(function (s, a) { return s + Number(a.remaining || 0); }, 0);
       return {
         activitiesCount: acts.length,
         completedCount: acts.filter(function (a) { return a.status === 'completed'; }).length,
         inProgressCount: acts.filter(function (a) { return a.status === 'in_progress'; }).length,
         pendingCount: acts.filter(function (a) { return a.status === 'pending'; }).length,
-        paymentsCount: pays.length,
         totalPaid: totalPaid,
-        totalPending: totalPending,
         totalRemaining: totalRemaining,
         totalSpent: totalPaid
       };

@@ -7,14 +7,366 @@
   var DB  = ICO.DB;
   var fmt = ICO.fmt;
 
-  var APP_VERSION = '2.0.0';
+  var APP_VERSION = '3.0.0';
+
+  /* ── Translations ─────────────────────────────────────────── */
+  var TRANSLATIONS = {
+    en: {
+      'brand.tagline': 'Renovation Reporting',
+      'splash.tagline': 'Renovation Reporting',
+      'nav.section.main': 'Main',
+      'nav.section.insights': 'Insights',
+      'nav.section.app': 'App',
+      'nav.dashboard': 'Dashboard',
+      'nav.activities': 'Activities',
+      'nav.reports': 'Reports',
+      'nav.auditlog': 'Audit Log',
+      'nav.settings': 'Settings',
+      'nav.signout': 'Sign Out',
+      'nav.home': 'Home',
+      'nav.log': 'Log',
+      'login.select': 'Select your profile to continue',
+      'login.or': 'or create a new profile',
+      'login.fullname': 'Full Name',
+      'login.role': 'Role',
+      'login.optional': 'optional',
+      'login.createbtn': 'Create Profile & Sign In',
+      'dash.title': 'Dashboard',
+      'dash.welcome': 'Welcome back, {name}',
+      'dash.subtitle': 'Renovation project overview',
+      'dash.totalspent': 'Total Paid',
+      'dash.remaining': 'Remaining',
+      'dash.activities': 'Activities',
+      'dash.pending': 'Pending Activities',
+      'dash.quickactions': 'Quick Actions',
+      'dash.addactivity': 'Add Activity',
+      'dash.allactivities': 'All Activities',
+      'dash.reports': 'Reports',
+      'dash.auditlog': 'Audit Log',
+      'dash.recentactivities': 'Recent Activities',
+      'dash.viewall': 'View All →',
+      'dash.noactivities': 'No activities yet.',
+      'dash.outstandingbalance': 'Outstanding balance',
+      'dash.awaitingsettlement': 'Awaiting completion',
+      'dash.completedN': '{count} completed',
+      'dash.inprogressN': '{count} in progress',
+      'act.title': 'Activities',
+      'act.subtitle': 'Track all renovation tasks and work items',
+      'act.new': '＋ New Activity',
+      'act.search': 'Search activities…',
+      'act.allstatuses': 'All Statuses',
+      'act.allcats': 'All Categories',
+      'act.col.date': 'Date',
+      'act.col.title': 'Title',
+      'act.col.category': 'Category',
+      'act.col.status': 'Status',
+      'act.col.paid': 'Paid',
+      'act.col.type': 'Payment Type',
+      'act.col.remaining': 'Remaining',
+      'act.col.actions': 'Actions',
+      'act.empty': 'No activities found',
+      'act.emptysub': 'Adjust your filters or add a new activity.',
+      'act.edit': 'Edit',
+      'act.del': 'Del',
+      'act.modal.new': 'New Activity',
+      'act.modal.edit': 'Edit Activity',
+      'act.modal.fieldtitle': 'Title',
+      'act.modal.fielddate': 'Date',
+      'act.modal.fieldcat': 'Category',
+      'act.modal.fieldstatus': 'Status',
+      'act.modal.fieldcontractor': 'Contractor / Supplier',
+      'act.modal.fieldnotes': 'Notes',
+      'act.modal.fieldamount': 'Payment Amount',
+      'act.modal.fieldtype': 'Payment Type',
+      'act.modal.fieldremaining': 'Due / Remaining',
+      'act.modal.cancel': 'Cancel',
+      'act.modal.save': 'Save Changes',
+      'act.modal.create': 'Create Activity',
+      'act.toast.created': 'Activity created',
+      'act.toast.updated': 'Activity updated',
+      'act.toast.deleted': 'Activity deleted',
+      'act.confirm.delete': 'Delete "{title}"?',
+      'status.pending': 'Pending',
+      'status.in_progress': 'In Progress',
+      'status.completed': 'Completed',
+      'status.cancelled': 'Cancelled',
+      'method.cash': 'Cash',
+      'method.bank_transfer': 'Bank Transfer',
+      'method.card': 'Card',
+      'method.other': 'Other',
+      'cat.Demolition': 'Demolition',
+      'cat.Electrical': 'Electrical',
+      'cat.Plumbing': 'Plumbing',
+      'cat.Tiling': 'Tiling',
+      'cat.Flooring': 'Flooring',
+      'cat.Plastering': 'Plastering',
+      'cat.Painting': 'Painting',
+      'cat.Roofing': 'Roofing',
+      'cat.Windows': 'Windows',
+      'cat.Doors': 'Doors',
+      'cat.Insulation': 'Insulation',
+      'cat.Other': 'Other',
+      'rep.title': 'Reports',
+      'rep.subtitle': 'Financial summaries and project breakdowns',
+      'rep.print': '🖨 Print',
+      'rep.search': 'Search activities…',
+      'rep.allcats': 'All Categories',
+      'rep.allstatuses': 'All Statuses',
+      'rep.reset': 'Reset',
+      'rep.totalspent': 'Total Paid',
+      'rep.totalremaining': 'Total Remaining',
+      'rep.pendingcount': 'Pending Activities',
+      'rep.matched': 'Matched Records',
+      'rep.bycategory': 'Spend by Category',
+      'rep.bytype': 'Payment Methods',
+      'rep.bydate': 'Activities by Date',
+      'rep.nodata': 'No data.',
+      'rep.empty': 'No activities match your filters',
+      'rep.emptysub': 'Try adjusting or resetting the filters.',
+      'rep.ofTotal': 'of {total} total activities',
+      'rep.paidacts': '{count} paid activities',
+      'rep.outstanding': 'Outstanding balance',
+      'rep.pendingacts': 'Pending activities',
+      'aud.title': 'Audit Log',
+      'aud.subtitle': 'Complete history of all changes',
+      'aud.clearlog': 'Clear Log',
+      'aud.confirmclear': 'Clear the entire audit log? This cannot be undone.',
+      'aud.cleared': 'Audit log cleared',
+      'aud.allusers': 'All Users',
+      'aud.allactions': 'All Actions',
+      'aud.allentities': 'All Entities',
+      'aud.reset': 'Reset',
+      'aud.viewchanges': 'View Changes',
+      'aud.changes': 'Change Details',
+      'aud.empty': 'No audit entries found',
+      'aud.emptysub': 'Actions like creating or editing records will appear here.',
+      'set.title': 'Settings',
+      'set.subtitle': 'Manage your data and app preferences',
+      'set.datamgmt': 'Data Management',
+      'set.export': 'Export Data',
+      'set.exportdesc': 'Download all your data (activities, audit log) as a JSON file for backup or transfer.',
+      'set.exportbtn': 'Export as JSON',
+      'set.import': 'Import Data',
+      'set.importdesc': 'Import data from a previously exported JSON file. This will <strong>overwrite</strong> the matching data.',
+      'set.importbtn': 'Import from JSON',
+      'set.reset': 'Reset App Data',
+      'set.resetdesc': 'Remove all your data and restore the original demo data. This <strong>cannot be undone</strong>.',
+      'set.resetbtn': 'Reset to Demo Data',
+      'set.appinfo': 'App Information',
+      'set.appname': 'ICO Renovation Reporting',
+      'set.version': 'Version',
+      'set.storage': 'Storage',
+      'set.storageval': 'Local (browser localStorage)',
+      'set.activities': 'Activities',
+      'set.auditentries': 'Audit Entries',
+      'set.records': 'records',
+      'set.entries': 'entries',
+      'set.cloudsync': 'Cloud Sync',
+      'set.clouddesc': 'Cloud sync and multi-device access will be available in a future update. Your data is safely stored locally for now.',
+      'set.exported': 'Data exported successfully',
+      'set.imported': 'Data imported successfully. Refreshing…',
+      'set.importfail': 'Import failed: invalid JSON file',
+      'set.confirmreset': 'Reset ALL data to the original demo data? This cannot be undone.',
+      'set.resetdone': 'App data has been reset to demo data',
+      'common.close': 'Close',
+      'common.select': '— Select —'
+    },
+    bg: {
+      'brand.tagline': 'Ремонтни дейности',
+      'splash.tagline': 'Ремонтни дейности',
+      'nav.section.main': 'Основни',
+      'nav.section.insights': 'Отчети',
+      'nav.section.app': 'Приложение',
+      'nav.dashboard': 'Табло',
+      'nav.activities': 'Дейности',
+      'nav.reports': 'Отчети',
+      'nav.auditlog': 'Журнал',
+      'nav.settings': 'Настройки',
+      'nav.signout': 'Изход',
+      'nav.home': 'Начало',
+      'nav.log': 'Журнал',
+      'login.select': 'Изберете вашия профил за вход',
+      'login.or': 'или създайте нов профил',
+      'login.fullname': 'Пълно име',
+      'login.role': 'Роля',
+      'login.optional': 'по избор',
+      'login.createbtn': 'Създай профил и влез',
+      'dash.title': 'Табло',
+      'dash.welcome': 'Добре дошъл, {name}',
+      'dash.subtitle': 'Преглед на ремонтния проект',
+      'dash.totalspent': 'Платено',
+      'dash.remaining': 'Остатък',
+      'dash.activities': 'Дейности',
+      'dash.pending': 'Предстоящи дейности',
+      'dash.quickactions': 'Бързи действия',
+      'dash.addactivity': 'Добави дейност',
+      'dash.allactivities': 'Всички дейности',
+      'dash.reports': 'Отчети',
+      'dash.auditlog': 'Журнал',
+      'dash.recentactivities': 'Последни дейности',
+      'dash.viewall': 'Виж всички →',
+      'dash.noactivities': 'Няма дейности.',
+      'dash.outstandingbalance': 'Неизплатен остатък',
+      'dash.awaitingsettlement': 'Предстоящо изпълнение',
+      'dash.completedN': '{count} завършени',
+      'dash.inprogressN': '{count} в процес',
+      'act.title': 'Дейности',
+      'act.subtitle': 'Проследявайте всички задачи и дейности по ремонта',
+      'act.new': '＋ Нова дейност',
+      'act.search': 'Търси дейности…',
+      'act.allstatuses': 'Всички статуси',
+      'act.allcats': 'Всички категории',
+      'act.col.date': 'Дата',
+      'act.col.title': 'Заглавие',
+      'act.col.category': 'Категория',
+      'act.col.status': 'Статус',
+      'act.col.paid': 'Платена сума',
+      'act.col.type': 'Вид плащане',
+      'act.col.remaining': 'Остатък',
+      'act.col.actions': 'Действия',
+      'act.empty': 'Няма намерени дейности',
+      'act.emptysub': 'Коригирайте филтрите или добавете нова дейност.',
+      'act.edit': 'Редакция',
+      'act.del': 'Изтрий',
+      'act.modal.new': 'Нова дейност',
+      'act.modal.edit': 'Редактирай дейност',
+      'act.modal.fieldtitle': 'Заглавие',
+      'act.modal.fielddate': 'Дата',
+      'act.modal.fieldcat': 'Категория',
+      'act.modal.fieldstatus': 'Статус',
+      'act.modal.fieldcontractor': 'Изпълнител / Доставчик',
+      'act.modal.fieldnotes': 'Бележки',
+      'act.modal.fieldamount': 'Платена сума',
+      'act.modal.fieldtype': 'Вид плащане',
+      'act.modal.fieldremaining': 'Остатък',
+      'act.modal.cancel': 'Откажи',
+      'act.modal.save': 'Запиши',
+      'act.modal.create': 'Създай дейност',
+      'act.toast.created': 'Дейността е създадена',
+      'act.toast.updated': 'Дейността е обновена',
+      'act.toast.deleted': 'Дейността е изтрита',
+      'act.confirm.delete': 'Изтриване на "{title}"?',
+      'status.pending': 'Предстоящо',
+      'status.in_progress': 'В процес',
+      'status.completed': 'Завършено',
+      'status.cancelled': 'Отменено',
+      'method.cash': 'В брой',
+      'method.bank_transfer': 'Банков превод',
+      'method.card': 'Карта',
+      'method.other': 'Друго',
+      'cat.Demolition': 'Демонтаж',
+      'cat.Electrical': 'Електро',
+      'cat.Plumbing': 'ВиК',
+      'cat.Tiling': 'Плочки',
+      'cat.Flooring': 'Подове',
+      'cat.Plastering': 'Мазилка',
+      'cat.Painting': 'Боядисване',
+      'cat.Roofing': 'Покрив',
+      'cat.Windows': 'Прозорци',
+      'cat.Doors': 'Врати',
+      'cat.Insulation': 'Изолация',
+      'cat.Other': 'Друго',
+      'rep.title': 'Отчети',
+      'rep.subtitle': 'Финансови обобщения и разбивки по проект',
+      'rep.print': '🖨 Печат',
+      'rep.search': 'Търси дейности…',
+      'rep.allcats': 'Всички категории',
+      'rep.allstatuses': 'Всички статуси',
+      'rep.reset': 'Нулиране',
+      'rep.totalspent': 'Платено',
+      'rep.totalremaining': 'Общ остатък',
+      'rep.pendingcount': 'Предстоящи дейности',
+      'rep.matched': 'Намерени записи',
+      'rep.bycategory': 'Платено по категория',
+      'rep.bytype': 'Вид плащане',
+      'rep.bydate': 'Дейности по дата',
+      'rep.nodata': 'Няма данни.',
+      'rep.empty': 'Няма дейности по зададените филтри',
+      'rep.emptysub': 'Опитайте да нулирате филтрите.',
+      'rep.ofTotal': 'от {total} общо дейности',
+      'rep.paidacts': '{count} платени дейности',
+      'rep.outstanding': 'Неизплатен остатък',
+      'rep.pendingacts': 'Предстоящи дейности',
+      'aud.title': 'Одиторски журнал',
+      'aud.subtitle': 'Пълна история на всички промени',
+      'aud.clearlog': 'Изчисти журнала',
+      'aud.confirmclear': 'Изчистване на целия журнал? Това не може да бъде отменено.',
+      'aud.cleared': 'Журналът е изчистен',
+      'aud.allusers': 'Всички потребители',
+      'aud.allactions': 'Всички действия',
+      'aud.allentities': 'Всички обекти',
+      'aud.reset': 'Нулиране',
+      'aud.viewchanges': 'Виж промени',
+      'aud.changes': 'Детайли на промяната',
+      'aud.empty': 'Няма журнални записи',
+      'aud.emptysub': 'Действия като създаване или редактиране ще се покажат тук.',
+      'set.title': 'Настройки',
+      'set.subtitle': 'Управлявайте данните и настройките на приложението',
+      'set.datamgmt': 'Управление на данни',
+      'set.export': 'Експорт на данни',
+      'set.exportdesc': 'Изтеглете всички данни (дейности, журнал) като JSON файл за резервно копие.',
+      'set.exportbtn': 'Експорт като JSON',
+      'set.import': 'Импорт на данни',
+      'set.importdesc': 'Импортирайте данни от предварително експортиран JSON файл. Това ще <strong>замени</strong> съответстващите данни.',
+      'set.importbtn': 'Импорт от JSON',
+      'set.reset': 'Нулиране на данните',
+      'set.resetdesc': 'Изтрийте всички данни и възстановете оригиналните демо данни. Това <strong>не може да бъде отменено</strong>.',
+      'set.resetbtn': 'Нулиране към демо данни',
+      'set.appinfo': 'Информация за приложението',
+      'set.appname': 'ICO Ремонтни дейности',
+      'set.version': 'Версия',
+      'set.storage': 'Съхранение',
+      'set.storageval': 'Локално (localStorage)',
+      'set.activities': 'Дейности',
+      'set.auditentries': 'Журнални записи',
+      'set.records': 'записа',
+      'set.entries': 'записа',
+      'set.cloudsync': 'Облачна синхронизация',
+      'set.clouddesc': 'Облачната синхронизация ще бъде налична в бъдеща версия. Данните ви са безопасно съхранени локално.',
+      'set.exported': 'Данните са успешно експортирани',
+      'set.imported': 'Данните са успешно импортирани. Зареждане…',
+      'set.importfail': 'Импортът е неуспешен: невалиден JSON файл',
+      'set.confirmreset': 'Нулиране на ВСИЧКИ данни към оригиналните демо данни? Това не може да бъде отменено.',
+      'set.resetdone': 'Данните на приложението са нулирани към демо данните',
+      'common.close': 'Затвори',
+      'common.select': '— Избери —'
+    }
+  };
 
   /* ── State ────────────────────────────────────────────────── */
   var state = {
     currentUser: null,
     currentPage: 'dashboard',
-    sidebarOpen: false
+    sidebarOpen: false,
+    lang: 'en'
   };
+
+  /* ── Translation helper ──────────────────────────────────── */
+  function t(key, params) {
+    var lang = state.lang || 'en';
+    var str = (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) ||
+              (TRANSLATIONS['en'] && TRANSLATIONS['en'][key]) || key;
+    if (params) {
+      Object.keys(params).forEach(function (k) {
+        str = str.replace('{' + k + '}', params[k]);
+      });
+    }
+    return str;
+  }
+
+  /* Apply data-i18n translations to elements in the DOM */
+  function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      el.innerHTML = t(el.getAttribute('data-i18n-html'));
+    });
+    // Update lang buttons active state
+    document.querySelectorAll('.lang-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === state.lang);
+    });
+  }
 
   /* ── Helpers ─────────────────────────────────────────────── */
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
@@ -58,22 +410,19 @@
   }
 
   function statusBadge(status) {
-    var map = {
-      completed: ['badge-success', 'Completed'],
-      in_progress: ['badge-primary', 'In Progress'],
-      pending: ['badge-warning', 'Pending'],
-      cancelled: ['badge-danger', 'Cancelled'],
-      paid: ['badge-success', 'Paid'],
-      partial: ['badge-warning', 'Partial'],
-      overdue: ['badge-danger', 'Overdue']
+    var classes = {
+      completed: 'badge-success',
+      in_progress: 'badge-primary',
+      pending: 'badge-warning',
+      cancelled: 'badge-danger'
     };
-    var v = map[status] || ['badge-default', status || '—'];
-    return '<span class="badge ' + v[0] + '">' + escHtml(v[1]) + '</span>';
+    var cls = classes[status] || 'badge-default';
+    var label = t('status.' + status) || status || '—';
+    return '<span class="badge ' + cls + '">' + escHtml(label) + '</span>';
   }
 
   function methodLabel(m) {
-    var map = { bank_transfer: 'Bank Transfer', cash: 'Cash', card: 'Card', cheque: 'Cheque', other: 'Other' };
-    return map[m] || m || '—';
+    return t('method.' + m) || m || '—';
   }
 
   function getProfileName(id) {
@@ -147,6 +496,7 @@
     var app    = document.getElementById('app');
     screen.classList.remove('hidden');
     app.classList.add('hidden');
+    applyTranslations();
     renderProfileList();
   }
 
@@ -183,7 +533,7 @@
       var name = form.elements['pname'].value.trim();
       var role = form.elements['prole'].value.trim();
       if (!name) return;
-      var p = DB.createProfile({
+      DB.createProfile({
         name: name,
         initials: fmt.initials(name),
         role: role || 'User'
@@ -192,18 +542,29 @@
       renderProfileList();
       toast('Profile "' + name + '" created', 'success');
     });
+
+    // Language selector buttons
+    document.querySelectorAll('.lang-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var lang = btn.getAttribute('data-lang');
+        state.lang = lang;
+        try { localStorage.setItem('ico_lang', lang); } catch (e) { /* ignore */ }
+        applyTranslations();
+      });
+    });
   }
 
   /* ── App Shell ───────────────────────────────────────────── */
   function initApp() {
     // set current user in sidebar
-    var el = document.querySelector('.sidebar-user .uname');
-    if (el) el.textContent = state.currentUser.name;
-    var ri = document.querySelector('.sidebar-user .urole');
-    if (ri) ri.textContent = state.currentUser.role || 'User';
+    var uname = document.querySelector('.sidebar-user .uname');
+    if (uname) uname.textContent = state.currentUser.name;
+    var urole = document.querySelector('.sidebar-user .urole');
+    if (urole) urole.textContent = state.currentUser.role || 'User';
     var av = document.querySelector('.sidebar-user .avatar');
     if (av) av.textContent = state.currentUser.initials || fmt.initials(state.currentUser.name);
 
+    applyTranslations();
     setupNavigation();
     navigate('dashboard');
   }
@@ -259,19 +620,18 @@
     });
 
     // update topbar title
-    var titles = {
-      dashboard: 'Dashboard',
-      activities: 'Activities',
-      payments: 'Payments',
-      reports: 'Reports',
-      auditlog: 'Audit Log',
-      settings: 'Settings'
+    var titleKeys = {
+      dashboard: 'nav.dashboard',
+      activities: 'nav.activities',
+      reports: 'nav.reports',
+      auditlog: 'nav.auditlog',
+      settings: 'nav.settings'
     };
     var titleEl = document.getElementById('topbar-title');
-    if (titleEl) titleEl.textContent = titles[page] || page;
+    if (titleEl) titleEl.textContent = t(titleKeys[page] || 'nav.' + page);
 
     // render page
-    var pages = { dashboard: renderDashboard, activities: renderActivities, payments: renderPayments, reports: renderReports, auditlog: renderAuditLog, settings: renderSettings };
+    var pages = { dashboard: renderDashboard, activities: renderActivities, reports: renderReports, auditlog: renderAuditLog, settings: renderSettings };
     var main = document.getElementById('main-page');
     if (main && pages[page]) {
       main.innerHTML = '';
@@ -299,74 +659,62 @@
   function renderDashboard(container) {
     var sum = DB.getSummary();
     var acts = DB.getActivities().slice().sort(function (a, b) { return b.updatedAt.localeCompare(a.updatedAt); }).slice(0, 5);
-    var pays = DB.getPayments().slice().sort(function (a, b) { return b.createdAt.localeCompare(a.createdAt); }).slice(0, 4);
 
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Welcome back, ' + escHtml((state.currentUser || {}).name || 'User') + '</h1>' +
-          '<p>Renovation project overview</p></div>' +
+          '<div><h1>' + escHtml(t('dash.welcome', { name: (state.currentUser || {}).name || 'User' })) + '</h1>' +
+          '<p>' + escHtml(t('dash.subtitle')) + '</p></div>' +
         '</div>' +
 
         /* Stat cards */
         '<div class="grid-4 mb-3" id="stat-cards">' +
           '<div class="stat-card">' +
             '<div class="stat-icon">💰</div>' +
-            '<div class="stat-label">Total Spent</div>' +
+            '<div class="stat-label">' + escHtml(t('dash.totalspent')) + '</div>' +
             '<div class="stat-value">' + escHtml(fmt.currency(sum.totalSpent)) + '</div>' +
-            '<div class="stat-sub">' + sum.paymentsCount + ' payments</div>' +
+            '<div class="stat-sub">' + escHtml(t('dash.completedN', { count: sum.completedCount })) + '</div>' +
           '</div>' +
           '<div class="stat-card danger">' +
             '<div class="stat-icon">⏳</div>' +
-            '<div class="stat-label">Remaining</div>' +
+            '<div class="stat-label">' + escHtml(t('dash.remaining')) + '</div>' +
             '<div class="stat-value">' + escHtml(fmt.currency(sum.totalRemaining)) + '</div>' +
-            '<div class="stat-sub">Outstanding balance</div>' +
+            '<div class="stat-sub">' + escHtml(t('dash.outstandingbalance')) + '</div>' +
           '</div>' +
           '<div class="stat-card">' +
             '<div class="stat-icon">🔨</div>' +
-            '<div class="stat-label">Activities</div>' +
+            '<div class="stat-label">' + escHtml(t('dash.activities')) + '</div>' +
             '<div class="stat-value">' + sum.activitiesCount + '</div>' +
-            '<div class="stat-sub">' + sum.completedCount + ' completed · ' + sum.inProgressCount + ' in progress</div>' +
+            '<div class="stat-sub">' + escHtml(t('dash.completedN', { count: sum.completedCount })) + ' · ' + escHtml(t('dash.inprogressN', { count: sum.inProgressCount })) + '</div>' +
           '</div>' +
           '<div class="stat-card accent">' +
-            '<div class="stat-icon">💳</div>' +
-            '<div class="stat-label">Pending Payments</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(sum.totalPending)) + '</div>' +
-            '<div class="stat-sub">Awaiting settlement</div>' +
+            '<div class="stat-icon">📋</div>' +
+            '<div class="stat-label">' + escHtml(t('dash.pending')) + '</div>' +
+            '<div class="stat-value">' + sum.pendingCount + '</div>' +
+            '<div class="stat-sub">' + escHtml(t('dash.awaitingsettlement')) + '</div>' +
           '</div>' +
         '</div>' +
 
         /* Quick actions */
         '<div class="card mb-3">' +
-          '<div class="card-header"><h2>Quick Actions</h2></div>' +
+          '<div class="card-header"><h2>' + escHtml(t('dash.quickactions')) + '</h2></div>' +
           '<div class="card-body">' +
             '<div class="quick-actions">' +
-              '<div class="quick-tile" data-quick="new-activity"><div class="qt-icon">➕🔨</div><div class="qt-label">Add Activity</div></div>' +
-              '<div class="quick-tile" data-quick="new-payment"><div class="qt-icon">➕💳</div><div class="qt-label">Add Payment</div></div>' +
-              '<div class="quick-tile" data-quick="goto-activities"><div class="qt-icon">📋</div><div class="qt-label">All Activities</div></div>' +
-              '<div class="quick-tile" data-quick="goto-payments"><div class="qt-icon">💰</div><div class="qt-label">All Payments</div></div>' +
-              '<div class="quick-tile" data-quick="goto-reports"><div class="qt-icon">📊</div><div class="qt-label">Reports</div></div>' +
-              '<div class="quick-tile" data-quick="goto-auditlog"><div class="qt-icon">📜</div><div class="qt-label">Audit Log</div></div>' +
+              '<div class="quick-tile" data-quick="new-activity"><div class="qt-icon">➕🔨</div><div class="qt-label">' + escHtml(t('dash.addactivity')) + '</div></div>' +
+              '<div class="quick-tile" data-quick="goto-activities"><div class="qt-icon">📋</div><div class="qt-label">' + escHtml(t('dash.allactivities')) + '</div></div>' +
+              '<div class="quick-tile" data-quick="goto-reports"><div class="qt-icon">📊</div><div class="qt-label">' + escHtml(t('dash.reports')) + '</div></div>' +
+              '<div class="quick-tile" data-quick="goto-auditlog"><div class="qt-icon">📜</div><div class="qt-label">' + escHtml(t('dash.auditlog')) + '</div></div>' +
             '</div>' +
           '</div>' +
         '</div>' +
 
         /* Recent activities */
-        '<div class="grid-2">' +
-          '<div class="card">' +
-            '<div class="card-header"><h2>Recent Activities</h2></div>' +
-            '<div class="card-body" style="padding:0">' +
-              renderTimelineActivities(acts) +
-            '</div>' +
-            '<div class="card-footer"><button class="btn btn-ghost btn-sm btn-full" data-nav="activities">View All →</button></div>' +
+        '<div class="card">' +
+          '<div class="card-header"><h2>' + escHtml(t('dash.recentactivities')) + '</h2></div>' +
+          '<div class="card-body" style="padding:0">' +
+            renderTimelineActivities(acts) +
           '</div>' +
-          '<div class="card">' +
-            '<div class="card-header"><h2>Recent Payments</h2></div>' +
-            '<div class="card-body" style="padding:0">' +
-              renderTimelinePayments(pays) +
-            '</div>' +
-            '<div class="card-footer"><button class="btn btn-ghost btn-sm btn-full" data-nav="payments">View All →</button></div>' +
-          '</div>' +
+          '<div class="card-footer"><button class="btn btn-ghost btn-sm btn-full" data-nav="activities">' + escHtml(t('dash.viewall')) + '</button></div>' +
         '</div>' +
       '</div>';
 
@@ -374,10 +722,8 @@
     container.querySelectorAll('[data-quick]').forEach(function (tile) {
       tile.addEventListener('click', function () {
         var q = tile.getAttribute('data-quick');
-        if (q === 'new-activity')     { navigate('activities'); setTimeout(function() { openActivityModal(null); }, 100); }
-        else if (q === 'new-payment') { navigate('payments');   setTimeout(function() { openPaymentModal(null); }, 100); }
+        if (q === 'new-activity')         { navigate('activities'); setTimeout(function() { openActivityModal(null); }, 100); }
         else if (q === 'goto-activities') navigate('activities');
-        else if (q === 'goto-payments')   navigate('payments');
         else if (q === 'goto-reports')    navigate('reports');
         else if (q === 'goto-auditlog')   navigate('auditlog');
       });
@@ -389,7 +735,7 @@
   }
 
   function renderTimelineActivities(acts) {
-    if (!acts.length) return '<div class="empty-state" style="padding:1.5rem"><p>No activities yet.</p></div>';
+    if (!acts.length) return '<div class="empty-state" style="padding:1.5rem"><p>' + escHtml(t('dash.noactivities')) + '</p></div>';
     var dotClass = { completed: 'success', in_progress: '', pending: 'accent' };
     return '<div class="timeline" style="padding:0 1.25rem">' +
       acts.map(function (a) {
@@ -397,22 +743,7 @@
           '<div class="timeline-dot ' + (dotClass[a.status] || '') + '"></div>' +
           '<div class="timeline-content">' +
             '<div class="tl-title">' + escHtml(a.title) + '</div>' +
-            '<div class="tl-meta">' + escHtml(a.category) + ' · ' + statusBadge(a.status) + ' · ' + fmt.relativeTime(a.updatedAt) + '</div>' +
-          '</div>' +
-        '</div>';
-      }).join('') +
-    '</div>';
-  }
-
-  function renderTimelinePayments(pays) {
-    if (!pays.length) return '<div class="empty-state" style="padding:1.5rem"><p>No payments yet.</p></div>';
-    return '<div class="timeline" style="padding:0 1.25rem">' +
-      pays.map(function (p) {
-        return '<div class="timeline-item">' +
-          '<div class="timeline-dot ' + (p.status === 'paid' ? 'success' : 'accent') + '"></div>' +
-          '<div class="timeline-content">' +
-            '<div class="tl-title">' + escHtml(fmt.currency(p.amount)) + (p.reference ? ' · ' + escHtml(p.reference) : '') + '</div>' +
-            '<div class="tl-meta">' + escHtml(getProfileName(p.paidBy)) + ' · ' + statusBadge(p.status) + ' · ' + fmt.relativeTime(p.createdAt) + '</div>' +
+            '<div class="tl-meta">' + escHtml(t('cat.' + a.category) || a.category) + ' · ' + statusBadge(a.status) + ' · ' + fmt.relativeTime(a.updatedAt) + '</div>' +
           '</div>' +
         '</div>';
       }).join('') +
@@ -420,35 +751,34 @@
   }
 
   /* ── ACTIVITIES ──────────────────────────────────────────── */
+  /* ── ACTIVITIES ──────────────────────────────────────────── */
   var actFilter = { search: '', status: '', category: '' };
+
+  var CATEGORIES = ['Demolition','Electrical','Plumbing','Tiling','Flooring','Plastering','Painting','Roofing','Windows','Doors','Insulation','Other'];
 
   function renderActivities(container) {
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Activities</h1><p>Track all renovation tasks and work items</p></div>' +
+          '<div><h1>' + escHtml(t('act.title')) + '</h1><p>' + escHtml(t('act.subtitle')) + '</p></div>' +
           '<div class="page-actions">' +
-            '<button class="btn btn-primary" id="btn-new-activity">＋ New Activity</button>' +
+            '<button class="btn btn-primary" id="btn-new-activity">' + escHtml(t('act.new')) + '</button>' +
           '</div>' +
         '</div>' +
 
-        /* Filter bar */
         '<div class="filter-bar">' +
           '<div class="search-wrap">' +
             '<span class="search-icon">🔍</span>' +
-            '<input type="search" id="act-search" placeholder="Search activities…" value="' + escHtml(actFilter.search) + '">' +
+            '<input type="search" id="act-search" placeholder="' + escHtml(t('act.search')) + '" value="' + escHtml(actFilter.search) + '">' +
           '</div>' +
           '<select id="act-status-filter">' +
-            '<option value="">All Statuses</option>' +
-            '<option value="pending"' + (actFilter.status==='pending'?' selected':'') + '>Pending</option>' +
-            '<option value="in_progress"' + (actFilter.status==='in_progress'?' selected':'') + '>In Progress</option>' +
-            '<option value="completed"' + (actFilter.status==='completed'?' selected':'') + '>Completed</option>' +
-            '<option value="cancelled"' + (actFilter.status==='cancelled'?' selected':'') + '>Cancelled</option>' +
+            '<option value="">' + escHtml(t('act.allstatuses')) + '</option>' +
+            ['pending','in_progress','completed','cancelled']
+              .map(function(s){ return '<option value="'+s+'"'+(actFilter.status===s?' selected':'')+'>'+escHtml(t('status.'+s))+'</option>'; }).join('') +
           '</select>' +
           '<select id="act-cat-filter">' +
-            '<option value="">All Categories</option>' +
-            ['Demolition','Electrical','Plumbing','Tiling','Flooring','Plastering','Painting','Roofing','Windows','Doors','Insulation','Other']
-              .map(function(c) { return '<option value="' + escHtml(c) + '"' + (actFilter.category===c?' selected':'') + '>' + escHtml(c) + '</option>'; }).join('') +
+            '<option value="">' + escHtml(t('act.allcats')) + '</option>' +
+            CATEGORIES.map(function(c) { return '<option value="' + escHtml(c) + '"' + (actFilter.category===c?' selected':'') + '>' + escHtml(t('cat.'+c)) + '</option>'; }).join('') +
           '</select>' +
         '</div>' +
 
@@ -465,7 +795,7 @@
 
   function getFilteredActivities() {
     return DB.getActivities().filter(function (a) {
-      if (actFilter.search && !(a.title + ' ' + a.category + ' ' + a.contractor).toLowerCase().includes(actFilter.search.toLowerCase())) return false;
+      if (actFilter.search && !(a.title + ' ' + a.category + ' ' + (a.contractor||'')).toLowerCase().includes(actFilter.search.toLowerCase())) return false;
       if (actFilter.status && a.status !== actFilter.status) return false;
       if (actFilter.category && a.category !== actFilter.category) return false;
       return true;
@@ -475,23 +805,32 @@
   function renderActivitiesList(container) {
     var acts = getFilteredActivities();
     if (!acts.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔨</div><h3>No activities found</h3><p>Adjust your filters or add a new activity.</p></div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔨</div><h3>' + escHtml(t('act.empty')) + '</h3><p>' + escHtml(t('act.emptysub')) + '</p></div>';
       return;
     }
     container.innerHTML = '<div class="card"><div class="data-table-wrap"><table class="data-table">' +
       '<thead><tr>' +
-        '<th>Date</th><th>Title</th><th>Category</th><th>Responsible</th><th>Status</th><th class="actions-col">Actions</th>' +
+        '<th>' + escHtml(t('act.col.date')) + '</th>' +
+        '<th>' + escHtml(t('act.col.title')) + '</th>' +
+        '<th>' + escHtml(t('act.col.category')) + '</th>' +
+        '<th>' + escHtml(t('act.col.status')) + '</th>' +
+        '<th>' + escHtml(t('act.col.paid')) + '</th>' +
+        '<th>' + escHtml(t('act.col.type')) + '</th>' +
+        '<th>' + escHtml(t('act.col.remaining')) + '</th>' +
+        '<th class="actions-col">' + escHtml(t('act.col.actions')) + '</th>' +
       '</tr></thead><tbody>' +
       acts.map(function (a) {
         return '<tr>' +
           '<td>' + escHtml(fmt.date(a.date)) + '</td>' +
           '<td><strong>' + escHtml(a.title) + '</strong>' + (a.contractor ? '<br><small class="text-muted">' + escHtml(a.contractor) + '</small>' : '') + '</td>' +
-          '<td><span class="badge badge-info">' + escHtml(a.category) + '</span></td>' +
-          '<td>' + escHtml(getProfileName(a.responsible)) + '</td>' +
+          '<td><span class="badge badge-info">' + escHtml(t('cat.' + a.category)) + '</span></td>' +
           '<td>' + statusBadge(a.status) + '</td>' +
+          '<td>' + (a.paymentAmount ? escHtml(fmt.currency(a.paymentAmount)) : '<span class="text-muted">\u2014</span>') + '</td>' +
+          '<td>' + (a.paymentType ? '<span class="badge badge-default">' + escHtml(methodLabel(a.paymentType)) + '</span>' : '<span class="text-muted">\u2014</span>') + '</td>' +
+          '<td>' + (Number(a.remaining) > 0 ? '<span class="text-danger">' + escHtml(fmt.currency(a.remaining)) + '</span>' : escHtml(fmt.currency(a.remaining || 0))) + '</td>' +
           '<td class="actions-col">' +
-            '<button class="btn btn-outline btn-sm" data-edit-act="' + escHtml(a.id) + '">Edit</button> ' +
-            '<button class="btn btn-danger btn-sm" data-del-act="' + escHtml(a.id) + '">Del</button>' +
+            '<button class="btn btn-outline btn-sm" data-edit-act="' + escHtml(a.id) + '">' + escHtml(t('act.edit')) + '</button> ' +
+            '<button class="btn btn-danger btn-sm" data-del-act="' + escHtml(a.id) + '">' + escHtml(t('act.del')) + '</button>' +
           '</td>' +
         '</tr>';
       }).join('') +
@@ -504,10 +843,11 @@
       btn.addEventListener('click', function () {
         var id = btn.getAttribute('data-del-act');
         var a = DB.getActivityById(id);
-        if (a && confirm('Delete "' + a.title + '"?')) {
+        var msg = a ? (t('act.confirm.delete') || 'Delete?').replace('{title}', a.title) : 'Delete?';
+        if (a && confirm(msg)) {
           DB.deleteActivity(id, (state.currentUser || {}).id);
           renderActivitiesList(container);
-          toast('Activity deleted', 'danger');
+          toast(t('act.toast.deleted'), 'danger');
         }
       });
     });
@@ -516,66 +856,82 @@
   /* ── Activity Modal ──────────────────────────────────────── */
   function openActivityModal(id) {
     var editing = id ? DB.getActivityById(id) : null;
-    var profiles = DB.getProfiles();
-    var categories = ['Demolition','Electrical','Plumbing','Tiling','Flooring','Plastering','Painting','Roofing','Windows','Doors','Insulation','Other'];
+    var PAYMENT_TYPES = ['cash','bank_transfer','card','other'];
 
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
+    var modalTitle = editing ? t('act.modal.edit') : t('act.modal.new');
+    var saveLabel  = editing ? t('act.modal.save') : t('act.modal.create');
+
+    var catOptions = CATEGORIES.map(function(c) {
+      var sel = ((editing||{}).category || 'Demolition') === c ? ' selected' : '';
+      return '<option value="'+escHtml(c)+'"'+sel+'>'+escHtml(t('cat.'+c))+'</option>';
+    }).join('');
+
+    var statusOptions = ['pending','in_progress','completed','cancelled'].map(function(s) {
+      var sel = ((editing||{}).status || 'pending') === s ? ' selected' : '';
+      return '<option value="'+s+'"'+sel+'>'+escHtml(t('status.'+s))+'</option>';
+    }).join('');
+
+    var typeOptions = PAYMENT_TYPES.map(function(m) {
+      var sel = ((editing||{}).paymentType || 'cash') === m ? ' selected' : '';
+      return '<option value="'+m+'"'+sel+'>'+escHtml(methodLabel(m))+'</option>';
+    }).join('');
+
+    var amountVal  = (editing && editing.paymentAmount != null) ? String(editing.paymentAmount) : '';
+    var remainVal  = (editing && editing.remaining  != null)    ? String(editing.remaining)     : '0';
+
     overlay.innerHTML =
-      '<div class="modal" role="dialog" aria-modal="true" aria-label="' + (editing ? 'Edit' : 'New') + ' Activity">' +
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="' + escHtml(modalTitle) + '">' +
         '<div class="modal-header">' +
-          '<h2>' + (editing ? 'Edit Activity' : 'New Activity') + '</h2>' +
-          '<button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close">✕</button>' +
+          '<h2>' + escHtml(modalTitle) + '</h2>' +
+          '<button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close">\u2715</button>' +
         '</div>' +
         '<div class="modal-body">' +
           '<form id="activity-form">' +
             '<div class="form-grid">' +
               '<div class="form-group">' +
-                '<label for="act-title">Title <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="act-title" name="title" required value="' + escHtml((editing||{}).title||'') + '" placeholder="e.g. Kitchen Demolition">' +
+                '<label for="act-title">' + escHtml(t('act.modal.fieldtitle')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
+                '<input class="form-control" id="act-title" name="title" required value="' + escHtml((editing||{}).title||'') + '">' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-date">Date <span style="color:var(--ico-danger)">*</span></label>' +
+                '<label for="act-date">' + escHtml(t('act.modal.fielddate')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
                 '<input class="form-control" id="act-date" name="date" type="date" required value="' + escHtml((editing||{}).date||ICO.today()) + '">' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-category">Category</label>' +
-                '<select class="form-control" id="act-category" name="category">' +
-                  categories.map(function(c){ return '<option value="'+escHtml(c)+'"'+(((editing||{}).category||'')==c?' selected':'')+'>'+escHtml(c)+'</option>'; }).join('') +
-                '</select>' +
+                '<label for="act-category">' + escHtml(t('act.modal.fieldcat')) + '</label>' +
+                '<select class="form-control" id="act-category" name="category">' + catOptions + '</select>' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-status">Status</label>' +
-                '<select class="form-control" id="act-status" name="status">' +
-                  [['pending','Pending'],['in_progress','In Progress'],['completed','Completed'],['cancelled','Cancelled']]
-                    .map(function(s){ return '<option value="'+s[0]+'"'+(((editing||{}).status||'pending')===s[0]?' selected':'')+'>'+s[1]+'</option>'; }).join('') +
-                '</select>' +
+                '<label for="act-status">' + escHtml(t('act.modal.fieldstatus')) + '</label>' +
+                '<select class="form-control" id="act-status" name="status">' + statusOptions + '</select>' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-responsible">Responsible</label>' +
-                '<select class="form-control" id="act-responsible" name="responsible">' +
-                  '<option value="">— Select —</option>' +
-                  profiles.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(((editing||{}).responsible||'')==p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
-                '</select>' +
+                '<label for="act-contractor">' + escHtml(t('act.modal.fieldcontractor')) + '</label>' +
+                '<input class="form-control" id="act-contractor" name="contractor" value="' + escHtml((editing||{}).contractor||'') + '">' +
               '</div>' +
               '<div class="form-group">' +
-                '<label for="act-contractor">Contractor / Supplier</label>' +
-                '<input class="form-control" id="act-contractor" name="contractor" value="' + escHtml((editing||{}).contractor||'') + '" placeholder="Company or person name">' +
-              '</div>' +
-              '<div class="form-group full">' +
-                '<label for="act-description">Description</label>' +
-                '<textarea class="form-control" id="act-description" name="description" rows="3">' + escHtml((editing||{}).description||'') + '</textarea>' +
-              '</div>' +
-              '<div class="form-group full">' +
-                '<label for="act-notes">Notes</label>' +
+                '<label for="act-notes">' + escHtml(t('act.modal.fieldnotes')) + '</label>' +
                 '<textarea class="form-control" id="act-notes" name="notes" rows="2">' + escHtml((editing||{}).notes||'') + '</textarea>' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-payment-amount">' + escHtml(t('act.modal.fieldamount')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
+                '<input class="form-control" id="act-payment-amount" name="paymentAmount" type="number" min="0" step="0.01" required value="' + escHtml(amountVal) + '" placeholder="0.00">' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-payment-type">' + escHtml(t('act.modal.fieldtype')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
+                '<select class="form-control" id="act-payment-type" name="paymentType" required>' + typeOptions + '</select>' +
+              '</div>' +
+              '<div class="form-group">' +
+                '<label for="act-remaining">' + escHtml(t('act.modal.fieldremaining')) + ' <span style="color:var(--ico-danger)">*</span></label>' +
+                '<input class="form-control" id="act-remaining" name="remaining" type="number" min="0" step="0.01" required value="' + escHtml(remainVal) + '" placeholder="0.00">' +
               '</div>' +
             '</div>' +
           '</form>' +
         '</div>' +
         '<div class="modal-footer">' +
-          '<button class="btn btn-ghost" id="modal-cancel">Cancel</button>' +
-          '<button class="btn btn-primary" id="modal-save">' + (editing ? 'Save Changes' : 'Create Activity') + '</button>' +
+          '<button class="btn btn-ghost" id="modal-cancel">' + escHtml(t('act.modal.cancel')) + '</button>' +
+          '<button class="btn btn-primary" id="modal-save">' + escHtml(saveLabel) + '</button>' +
         '</div>' +
       '</div>';
 
@@ -594,251 +950,37 @@
         date: form.elements['date'].value,
         category: form.elements['category'].value,
         status: form.elements['status'].value,
-        responsible: form.elements['responsible'].value,
         contractor: form.elements['contractor'].value.trim(),
-        description: form.elements['description'].value.trim(),
-        notes: form.elements['notes'].value.trim()
+        notes: form.elements['notes'].value.trim(),
+        paymentAmount: parseFloat(form.elements['paymentAmount'].value) || 0,
+        paymentType: form.elements['paymentType'].value,
+        remaining: parseFloat(form.elements['remaining'].value) || 0
       };
       if (editing) {
         DB.updateActivity(id, data, (state.currentUser||{}).id);
-        toast('Activity updated', 'success');
+        toast(t('act.toast.updated'), 'success');
       } else {
         DB.createActivity(data, (state.currentUser||{}).id);
-        toast('Activity created', 'success');
+        toast(t('act.toast.created'), 'success');
       }
       closeModal();
-      // refresh if on activities page
       var list = document.getElementById('activities-list');
       if (list) renderActivitiesList(list);
-      // refresh dashboard stats
-      var statCards = document.getElementById('stat-cards');
-      if (statCards) { navigate('dashboard'); }
-    });
-  }
-
-  /* ── PAYMENTS ────────────────────────────────────────────── */
-  var payFilter = { search: '', status: '', method: '' };
-
-  function renderPayments(container) {
-    container.innerHTML =
-      '<div class="page-inner">' +
-        '<div class="page-header">' +
-          '<div><h1>Payments</h1><p>Track all expenses and financial transactions</p></div>' +
-          '<div class="page-actions">' +
-            '<button class="btn btn-primary" id="btn-new-payment">＋ New Payment</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="filter-bar">' +
-          '<div class="search-wrap">' +
-            '<span class="search-icon">🔍</span>' +
-            '<input type="search" id="pay-search" placeholder="Search payments…" value="' + escHtml(payFilter.search) + '">' +
-          '</div>' +
-          '<select id="pay-status-filter">' +
-            '<option value="">All Statuses</option>' +
-            '<option value="paid"' + (payFilter.status==='paid'?' selected':'') + '>Paid</option>' +
-            '<option value="pending"' + (payFilter.status==='pending'?' selected':'') + '>Pending</option>' +
-            '<option value="partial"' + (payFilter.status==='partial'?' selected':'') + '>Partial</option>' +
-            '<option value="overdue"' + (payFilter.status==='overdue'?' selected':'') + '>Overdue</option>' +
-          '</select>' +
-          '<select id="pay-method-filter">' +
-            '<option value="">All Methods</option>' +
-            ['bank_transfer','cash','card','cheque','other']
-              .map(function(m){ return '<option value="'+m+'"'+(payFilter.method===m?' selected':'')+'>'+methodLabel(m)+'</option>'; }).join('') +
-          '</select>' +
-        '</div>' +
-
-        '<div id="payments-list"></div>' +
-      '</div>';
-
-    renderPaymentsList(container.querySelector('#payments-list'));
-
-    container.querySelector('#btn-new-payment').addEventListener('click', function () { openPaymentModal(null); });
-    container.querySelector('#pay-search').addEventListener('input', function (e) { payFilter.search = e.target.value; renderPaymentsList(container.querySelector('#payments-list')); });
-    container.querySelector('#pay-status-filter').addEventListener('change', function (e) { payFilter.status = e.target.value; renderPaymentsList(container.querySelector('#payments-list')); });
-    container.querySelector('#pay-method-filter').addEventListener('change', function (e) { payFilter.method = e.target.value; renderPaymentsList(container.querySelector('#payments-list')); });
-  }
-
-  function getFilteredPayments() {
-    return DB.getPayments().filter(function (p) {
-      if (payFilter.search && !(getActivityTitle(p.activityId) + ' ' + p.reference + ' ' + getProfileName(p.paidBy)).toLowerCase().includes(payFilter.search.toLowerCase())) return false;
-      if (payFilter.status && p.status !== payFilter.status) return false;
-      if (payFilter.method && p.method !== payFilter.method) return false;
-      return true;
-    }).sort(function (a, b) { return b.date.localeCompare(a.date); });
-  }
-
-  function renderPaymentsList(container) {
-    var pays = getFilteredPayments();
-    if (!pays.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div><h3>No payments found</h3><p>Adjust your filters or add a new payment.</p></div>';
-      return;
-    }
-    var total = pays.reduce(function (s, p) { return s + Number(p.amount); }, 0);
-    container.innerHTML = '<div class="card">' +
-      '<div class="data-table-wrap"><table class="data-table">' +
-        '<thead><tr>' +
-          '<th>Date</th><th>Amount</th><th>Paid By</th><th>Method</th><th>Activity</th><th>Reference</th><th>Status</th><th class="actions-col">Actions</th>' +
-        '</tr></thead><tbody>' +
-        pays.map(function (p) {
-          return '<tr>' +
-            '<td>' + escHtml(fmt.date(p.date)) + '</td>' +
-            '<td><strong>' + escHtml(fmt.currency(p.amount)) + '</strong>' + (p.remaining > 0 ? '<br><small class="text-danger">Rem: ' + escHtml(fmt.currency(p.remaining)) + '</small>' : '') + '</td>' +
-            '<td>' + escHtml(getProfileName(p.paidBy)) + '</td>' +
-            '<td><span class="badge badge-default">' + escHtml(methodLabel(p.method)) + '</span></td>' +
-            '<td>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '<span class="text-muted">—</span>') + '</td>' +
-            '<td>' + (p.reference ? escHtml(p.reference) : '<span class="text-muted">—</span>') + '</td>' +
-            '<td>' + statusBadge(p.status) + '</td>' +
-            '<td class="actions-col">' +
-              '<button class="btn btn-outline btn-sm" data-edit-pay="' + escHtml(p.id) + '">Edit</button> ' +
-              '<button class="btn btn-danger btn-sm" data-del-pay="' + escHtml(p.id) + '">Del</button>' +
-            '</td>' +
-          '</tr>';
-        }).join('') +
-        '</tbody></table></div>' +
-        '<div class="card-footer" style="text-align:right"><strong>Total: ' + escHtml(fmt.currency(total)) + '</strong> across ' + pays.length + ' payment(s)</div>' +
-      '</div>';
-
-    container.querySelectorAll('[data-edit-pay]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openPaymentModal(btn.getAttribute('data-edit-pay')); });
-    });
-    container.querySelectorAll('[data-del-pay]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('data-del-pay');
-        if (confirm('Delete this payment?')) {
-          DB.deletePayment(id, (state.currentUser||{}).id);
-          renderPaymentsList(container);
-          toast('Payment deleted', 'danger');
-        }
-      });
-    });
-  }
-
-  /* ── Payment Modal ───────────────────────────────────────── */
-  function openPaymentModal(id) {
-    var editing = id ? DB.getPaymentById(id) : null;
-    var profiles = DB.getProfiles();
-    var activities = DB.getActivities();
-
-    var overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML =
-      '<div class="modal" role="dialog" aria-modal="true" aria-label="' + (editing ? 'Edit' : 'New') + ' Payment">' +
-        '<div class="modal-header">' +
-          '<h2>' + (editing ? 'Edit Payment' : 'New Payment') + '</h2>' +
-          '<button class="btn btn-ghost btn-icon" id="modal-close" aria-label="Close">✕</button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-          '<form id="payment-form">' +
-            '<div class="form-grid">' +
-              '<div class="form-group">' +
-                '<label for="pay-date">Payment Date <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="pay-date" name="date" type="date" required value="' + escHtml((editing||{}).date||ICO.today()) + '">' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-amount">Amount (£) <span style="color:var(--ico-danger)">*</span></label>' +
-                '<input class="form-control" id="pay-amount" name="amount" type="number" min="0" step="0.01" required value="' + escHtml((editing||{}).amount||'') + '" placeholder="0.00">' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-paidby">Paid By</label>' +
-                '<select class="form-control" id="pay-paidby" name="paidBy">' +
-                  '<option value="">— Select —</option>' +
-                  profiles.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(((editing||{}).paidBy||'')==p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
-                '</select>' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-method">Payment Method</label>' +
-                '<select class="form-control" id="pay-method" name="method">' +
-                  [['bank_transfer','Bank Transfer'],['cash','Cash'],['card','Card'],['cheque','Cheque'],['other','Other']]
-                    .map(function(m){ return '<option value="'+m[0]+'"'+(((editing||{}).method||'bank_transfer')===m[0]?' selected':'')+'>'+m[1]+'</option>'; }).join('') +
-                '</select>' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-status">Status</label>' +
-                '<select class="form-control" id="pay-status" name="status">' +
-                  [['paid','Paid'],['pending','Pending'],['partial','Partial'],['overdue','Overdue']]
-                    .map(function(s){ return '<option value="'+s[0]+'"'+(((editing||{}).status||'paid')===s[0]?' selected':'')+'>'+s[1]+'</option>'; }).join('') +
-                '</select>' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-remaining">Remaining (£)</label>' +
-                '<input class="form-control" id="pay-remaining" name="remaining" type="number" min="0" step="0.01" value="' + escHtml((editing||{}).remaining||'0') + '">' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-activity">Linked Activity</label>' +
-                '<select class="form-control" id="pay-activity" name="activityId">' +
-                  '<option value="">— None —</option>' +
-                  activities.map(function(a){ return '<option value="'+escHtml(a.id)+'"'+(((editing||{}).activityId||'')==a.id?' selected':'')+'>'+escHtml(a.title)+'</option>'; }).join('') +
-                '</select>' +
-              '</div>' +
-              '<div class="form-group">' +
-                '<label for="pay-ref">Reference / Invoice #</label>' +
-                '<input class="form-control" id="pay-ref" name="reference" value="' + escHtml((editing||{}).reference||'') + '" placeholder="INV-2025-001">' +
-              '</div>' +
-              '<div class="form-group full">' +
-                '<label for="pay-notes">Notes</label>' +
-                '<textarea class="form-control" id="pay-notes" name="notes" rows="2">' + escHtml((editing||{}).notes||'') + '</textarea>' +
-              '</div>' +
-            '</div>' +
-          '</form>' +
-        '</div>' +
-        '<div class="modal-footer">' +
-          '<button class="btn btn-ghost" id="modal-cancel">Cancel</button>' +
-          '<button class="btn btn-primary" id="modal-save">' + (editing ? 'Save Changes' : 'Record Payment') + '</button>' +
-        '</div>' +
-      '</div>';
-
-    document.body.appendChild(overlay);
-
-    function closeModal() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
-    overlay.querySelector('#modal-close').addEventListener('click', closeModal);
-    overlay.querySelector('#modal-cancel').addEventListener('click', closeModal);
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
-
-    overlay.querySelector('#modal-save').addEventListener('click', function () {
-      var form = overlay.querySelector('#payment-form');
-      if (!form.checkValidity()) { form.reportValidity(); return; }
-      var data = {
-        date: form.elements['date'].value,
-        amount: parseFloat(form.elements['amount'].value) || 0,
-        paidBy: form.elements['paidBy'].value,
-        method: form.elements['method'].value,
-        status: form.elements['status'].value,
-        remaining: parseFloat(form.elements['remaining'].value) || 0,
-        activityId: form.elements['activityId'].value,
-        reference: form.elements['reference'].value.trim(),
-        notes: form.elements['notes'].value.trim()
-      };
-      if (editing) {
-        DB.updatePayment(id, data, (state.currentUser||{}).id);
-        toast('Payment updated', 'success');
-      } else {
-        DB.createPayment(data, (state.currentUser||{}).id);
-        toast('Payment recorded', 'success');
-      }
-      closeModal();
-      var list = document.getElementById('payments-list');
-      if (list) renderPaymentsList(list);
+      if (state.currentPage === 'dashboard') navigate('dashboard');
     });
   }
 
   /* ── REPORTS ─────────────────────────────────────────────── */
-  var reportFilter = { dateFrom: '', dateTo: '', category: '', payer: '', method: '', status: '', activityId: '', search: '' };
+  var reportFilter = { dateFrom: '', dateTo: '', category: '', status: '', search: '' };
 
-  function getFilteredReportPayments() {
-    return DB.getPayments().filter(function (p) {
-      if (reportFilter.dateFrom && p.date < reportFilter.dateFrom) return false;
-      if (reportFilter.dateTo   && p.date > reportFilter.dateTo)   return false;
-      if (reportFilter.category) {
-        var act = p.activityId ? DB.getActivityById(p.activityId) : null;
-        if (!act || act.category !== reportFilter.category) return false;
-      }
-      if (reportFilter.payer    && p.paidBy     !== reportFilter.payer)    return false;
-      if (reportFilter.method   && p.method     !== reportFilter.method)   return false;
-      if (reportFilter.status   && p.status     !== reportFilter.status)   return false;
-      if (reportFilter.activityId && p.activityId !== reportFilter.activityId) return false;
+  function getFilteredReportActivities() {
+    return DB.getActivities().filter(function (a) {
+      if (reportFilter.dateFrom && a.date < reportFilter.dateFrom) return false;
+      if (reportFilter.dateTo   && a.date > reportFilter.dateTo)   return false;
+      if (reportFilter.category && a.category !== reportFilter.category) return false;
+      if (reportFilter.status   && a.status   !== reportFilter.status)  return false;
       if (reportFilter.search) {
-        var haystack = (getActivityTitle(p.activityId) + ' ' + (p.reference || '') + ' ' + getProfileName(p.paidBy) + ' ' + (p.notes || '')).toLowerCase();
+        var haystack = (a.title + ' ' + (a.contractor||'') + ' ' + (a.notes||'')).toLowerCase();
         if (!haystack.includes(reportFilter.search.toLowerCase())) return false;
       }
       return true;
@@ -846,98 +988,67 @@
   }
 
   function renderReports(container) {
-    var acts  = DB.getActivities();
-    var profs = DB.getProfiles();
-    var categories = ['Demolition','Electrical','Plumbing','Tiling','Flooring','Plastering','Painting','Roofing','Windows','Doors','Insulation','Other'];
-
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Reports</h1><p>Financial summaries and project breakdowns</p></div>' +
+          '<div><h1>' + escHtml(t('rep.title')) + '</h1><p>' + escHtml(t('rep.subtitle')) + '</p></div>' +
           '<div class="page-actions">' +
-            '<button class="btn btn-ghost btn-sm" id="btn-print">🖨 Print</button>' +
+            '<button class="btn btn-ghost btn-sm" id="btn-print">' + escHtml(t('rep.print')) + '</button>' +
           '</div>' +
         '</div>' +
 
-        /* Filter bar */
         '<div class="filter-bar filter-bar-wrap">' +
           '<div class="search-wrap">' +
             '<span class="search-icon">🔍</span>' +
-            '<input type="search" id="rep-search" placeholder="Search payments…" value="' + escHtml(reportFilter.search) + '">' +
+            '<input type="search" id="rep-search" placeholder="' + escHtml(t('rep.search')) + '" value="' + escHtml(reportFilter.search) + '">' +
           '</div>' +
           '<input type="date" id="rep-date-from" class="filter-date" title="From date" value="' + escHtml(reportFilter.dateFrom) + '">' +
           '<input type="date" id="rep-date-to"   class="filter-date" title="To date"   value="' + escHtml(reportFilter.dateTo) + '">' +
           '<select id="rep-cat-filter">' +
-            '<option value="">All Categories</option>' +
-            categories.map(function(c){ return '<option value="'+escHtml(c)+'"'+(reportFilter.category===c?' selected':'')+'>'+escHtml(c)+'</option>'; }).join('') +
-          '</select>' +
-          '<select id="rep-payer-filter">' +
-            '<option value="">All Payers</option>' +
-            profs.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(reportFilter.payer===p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
-          '</select>' +
-          '<select id="rep-method-filter">' +
-            '<option value="">All Methods</option>' +
-            ['bank_transfer','cash','card','cheque','other']
-              .map(function(m){ return '<option value="'+m+'"'+(reportFilter.method===m?' selected':'')+'>'+methodLabel(m)+'</option>'; }).join('') +
+            '<option value="">' + escHtml(t('rep.allcats')) + '</option>' +
+            CATEGORIES.map(function(c){ return '<option value="'+escHtml(c)+'"'+(reportFilter.category===c?' selected':'')+'>'+escHtml(t('cat.'+c))+'</option>'; }).join('') +
           '</select>' +
           '<select id="rep-status-filter">' +
-            '<option value="">All Statuses</option>' +
-            '<option value="paid"'+(reportFilter.status==='paid'?' selected':'')+'>Paid</option>' +
-            '<option value="pending"'+(reportFilter.status==='pending'?' selected':'')+'>Pending</option>' +
-            '<option value="partial"'+(reportFilter.status==='partial'?' selected':'')+'>Partial</option>' +
-            '<option value="overdue"'+(reportFilter.status==='overdue'?' selected':'')+'>Overdue</option>' +
+            '<option value="">' + escHtml(t('rep.allstatuses')) + '</option>' +
+            ['pending','in_progress','completed','cancelled']
+              .map(function(s){ return '<option value="'+s+'"'+(reportFilter.status===s?' selected':'')+'>'+escHtml(t('status.'+s))+'</option>'; }).join('') +
           '</select>' +
-          '<select id="rep-act-filter">' +
-            '<option value="">All Activities</option>' +
-            acts.map(function(a){ return '<option value="'+escHtml(a.id)+'"'+(reportFilter.activityId===a.id?' selected':'')+'>'+escHtml(a.title)+'</option>'; }).join('') +
-          '</select>' +
-          '<button class="btn btn-ghost btn-sm" id="rep-reset-filters">Reset</button>' +
+          '<button class="btn btn-ghost btn-sm" id="rep-reset-filters">' + escHtml(t('rep.reset')) + '</button>' +
         '</div>' +
 
         '<div id="report-content"></div>' +
       '</div>';
 
     function rebuildReportContent() {
-      var pays = getFilteredReportPayments();
-      var totalSpent     = pays.filter(function(p){ return p.status === 'paid'; }).reduce(function(s,p){ return s + Number(p.amount); }, 0);
-      var totalRemaining = pays.reduce(function(s,p){ return s + Number(p.remaining||0); }, 0);
-      var totalPending   = pays.filter(function(p){ return p.status === 'pending'; }).reduce(function(s,p){ return s + Number(p.amount); }, 0);
+      var acts = getFilteredReportActivities();
+      var totalPaid      = acts.reduce(function(s,a){ return s + Number(a.paymentAmount||0); }, 0);
+      var totalRemaining = acts.reduce(function(s,a){ return s + Number(a.remaining||0); }, 0);
+      var pendingCount   = acts.filter(function(a){ return a.status === 'pending'; }).length;
 
-      // Spend by payer (filtered)
-      var byPayer = {};
-      var allProfs = DB.getProfiles();
-      allProfs.forEach(function(p){ byPayer[p.id] = { name: p.name, paid: 0, count: 0 }; });
-      pays.forEach(function(p) {
-        if (!byPayer[p.paidBy]) byPayer[p.paidBy] = { name: getProfileName(p.paidBy), paid: 0, count: 0 };
-        byPayer[p.paidBy].paid  += Number(p.amount);
-        byPayer[p.paidBy].count++;
-      });
-      var payerEntries = Object.values(byPayer).filter(function(e){ return e.count > 0; }).sort(function(a,b){ return b.paid-a.paid; });
-      var totalAll = pays.reduce(function(s,p){ return s+Number(p.amount); }, 0);
-
-      // Spend by category (filtered)
+      /* Spend by category */
       var byCat = {};
-      pays.forEach(function(p){
-        var cat = p.activityId ? ((DB.getActivityById(p.activityId)||{}).category || 'Uncategorised') : 'Uncategorised';
+      acts.forEach(function(a){
+        var cat = a.category || 'Other';
         if (!byCat[cat]) byCat[cat] = 0;
-        byCat[cat] += Number(p.amount);
+        byCat[cat] += Number(a.paymentAmount||0);
       });
-      var catEntries = Object.entries(byCat).sort(function(a,b){ return b[1]-a[1]; });
+      var catEntries = Object.keys(byCat).map(function(k){ return [k, byCat[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
       var maxCat = catEntries.length ? catEntries[0][1] : 1;
 
-      // Payment by method (filtered)
-      var byMethod = {};
-      pays.forEach(function(p){
-        if (!byMethod[p.method]) byMethod[p.method] = 0;
-        byMethod[p.method] += Number(p.amount);
+      /* By payment type */
+      var byType = {};
+      acts.forEach(function(a){
+        if (!byType[a.paymentType]) byType[a.paymentType] = 0;
+        byType[a.paymentType] += Number(a.paymentAmount||0);
       });
-      var methodEntries = Object.entries(byMethod).sort(function(a,b){ return b[1]-a[1]; });
+      var typeEntries = Object.keys(byType).map(function(k){ return [k, byType[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
+      var totalAll = acts.reduce(function(s,a){ return s+Number(a.paymentAmount||0); }, 0);
 
-      // Group payments by date
+      /* Group by date */
       var grouped = {};
-      pays.forEach(function(p){
-        if (!grouped[p.date]) grouped[p.date] = [];
-        grouped[p.date].push(p);
+      acts.forEach(function(a){
+        if (!grouped[a.date]) grouped[a.date] = [];
+        grouped[a.date].push(a);
       });
       var groupedDates = Object.keys(grouped).sort(function(a,b){ return b.localeCompare(a); });
 
@@ -945,172 +1056,107 @@
       if (!content) return;
 
       content.innerHTML =
-        /* Summary cards */
         '<div class="report-summary-grid">' +
           '<div class="stat-card">' +
-            '<div class="stat-label">Total Spent</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(totalSpent)) + '</div>' +
-            '<div class="stat-sub">' + pays.filter(function(p){ return p.status==='paid'; }).length + ' paid payments</div>' +
+            '<div class="stat-label">' + escHtml(t('rep.totalspent')) + '</div>' +
+            '<div class="stat-value">' + escHtml(fmt.currency(totalPaid)) + '</div>' +
+            '<div class="stat-sub">' + escHtml(t('rep.paidacts', { count: acts.filter(function(a){ return Number(a.paymentAmount||0)>0; }).length })) + '</div>' +
           '</div>' +
           '<div class="stat-card danger">' +
-            '<div class="stat-label">Total Remaining</div>' +
+            '<div class="stat-label">' + escHtml(t('rep.totalremaining')) + '</div>' +
             '<div class="stat-value">' + escHtml(fmt.currency(totalRemaining)) + '</div>' +
-            '<div class="stat-sub">Outstanding balance</div>' +
+            '<div class="stat-sub">' + escHtml(t('rep.outstanding')) + '</div>' +
           '</div>' +
           '<div class="stat-card accent">' +
-            '<div class="stat-label">Pending Amount</div>' +
-            '<div class="stat-value">' + escHtml(fmt.currency(totalPending)) + '</div>' +
-            '<div class="stat-sub">Awaiting settlement</div>' +
+            '<div class="stat-label">' + escHtml(t('rep.pendingcount')) + '</div>' +
+            '<div class="stat-value">' + pendingCount + '</div>' +
+            '<div class="stat-sub">' + escHtml(t('rep.pendingacts')) + '</div>' +
           '</div>' +
           '<div class="stat-card">' +
-            '<div class="stat-label">Matched Records</div>' +
-            '<div class="stat-value">' + pays.length + '</div>' +
-            '<div class="stat-sub">of ' + DB.getPayments().length + ' total payments</div>' +
+            '<div class="stat-label">' + escHtml(t('rep.matched')) + '</div>' +
+            '<div class="stat-value">' + acts.length + '</div>' +
+            '<div class="stat-sub">' + escHtml(t('rep.ofTotal', { total: DB.getActivities().length })) + '</div>' +
           '</div>' +
         '</div>' +
 
-        (pays.length === 0 ? '<div class="empty-state"><div class="empty-icon">📊</div><h3>No payments match your filters</h3><p>Try adjusting or resetting the filters.</p></div>' :
+        (acts.length === 0 ?
+          '<div class="empty-state"><div class="empty-icon">📊</div><h3>' + escHtml(t('rep.empty')) + '</h3><p>' + escHtml(t('rep.emptysub')) + '</p></div>' :
 
-        /* Breakdowns */
-        '<div class="grid-2 mb-3">' +
-          '<div class="card">' +
-            '<div class="card-header"><h2>Spend by Payer</h2></div>' +
-            '<div class="card-body">' +
-              (payerEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                payerEntries.map(function(pe){
-                  var pct = totalAll > 0 ? Math.round(pe.paid/totalAll*100) : 0;
-                  return '<div class="report-bar-wrap">' +
-                    '<div class="report-row" style="padding:.2rem 0">' +
-                      '<span class="label">' + escHtml(pe.name) + '</span>' +
-                      '<span class="value">' + escHtml(fmt.currency(pe.paid)) + ' <small class="text-muted">(' + pct + '%)</small></span>' +
-                    '</div>' +
-                    '<div class="report-bar-outer"><div class="report-bar-inner" style="width:'+pct+'%"></div></div>' +
-                  '</div>';
-                }).join('')) +
-            '</div>' +
-          '</div>' +
-          '<div class="card">' +
-            '<div class="card-header"><h2>Spend by Category</h2></div>' +
-            '<div class="card-body">' +
-              (catEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                catEntries.map(function(ce){
-                  var pct = Math.round(ce[1]/maxCat*100);
-                  return '<div class="report-bar-wrap">' +
-                    '<div class="report-row" style="padding:.2rem 0">' +
-                      '<span class="label">' + escHtml(ce[0]) + '</span>' +
-                      '<span class="value">' + escHtml(fmt.currency(ce[1])) + '</span>' +
-                    '</div>' +
-                    '<div class="report-bar-outer"><div class="report-bar-inner accent" style="width:'+pct+'%"></div></div>' +
-                  '</div>';
-                }).join('')) +
-            '</div>' +
-          '</div>' +
-          '<div class="card">' +
-            '<div class="card-header"><h2>Payment Methods</h2></div>' +
-            '<div class="card-body">' +
-              (methodEntries.length === 0 ? '<p class="text-muted">No data.</p>' :
-                methodEntries.map(function(me){
-                  var pct = totalAll > 0 ? Math.round(me[1]/totalAll*100) : 0;
-                  return '<div class="report-row">' +
-                    '<span class="label">' + escHtml(methodLabel(me[0])) + '</span>' +
-                    '<span class="value">' + escHtml(fmt.currency(me[1])) + ' <small class="text-muted">(' + pct + '%)</small></span>' +
-                  '</div>';
-                }).join('')) +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-
-        /* Grouped by date */
-        '<div class="card mb-3">' +
-          '<div class="card-header"><h2>Payments by Date</h2></div>' +
-          groupedDates.map(function(date){
-            var group = grouped[date];
-            var groupTotal = group.reduce(function(s,p){ return s+Number(p.amount); }, 0);
-            return '<div class="report-date-group">' +
-              '<div class="report-date-header">' +
-                '<span>' + escHtml(fmt.date(date)) + '</span>' +
-                '<span class="report-date-total">' + escHtml(fmt.currency(groupTotal)) + '</span>' +
+          '<div class="grid-2 mb-3">' +
+            '<div class="card">' +
+              '<div class="card-header"><h2>' + escHtml(t('rep.bycategory')) + '</h2></div>' +
+              '<div class="card-body">' +
+                (catEntries.length === 0 ? '<p class="text-muted">' + escHtml(t('rep.nodata')) + '</p>' :
+                  catEntries.map(function(ce){
+                    var pct = maxCat > 0 ? Math.round(ce[1]/maxCat*100) : 0;
+                    return '<div class="report-bar-wrap">' +
+                      '<div class="report-row" style="padding:.2rem 0">' +
+                        '<span class="label">' + escHtml(t('cat.'+ce[0])) + '</span>' +
+                        '<span class="value">' + escHtml(fmt.currency(ce[1])) + '</span>' +
+                      '</div>' +
+                      '<div class="report-bar-outer"><div class="report-bar-inner accent" style="width:'+pct+'%"></div></div>' +
+                    '</div>';
+                  }).join('')) +
               '</div>' +
-              '<div class="data-table-wrap"><table class="data-table">' +
-                '<tbody>' +
-                group.map(function(p){
-                  return '<tr class="report-detail-row" data-pay-id="' + escHtml(p.id) + '">' +
-                    '<td><strong>' + escHtml(fmt.currency(p.amount)) + '</strong>' + (p.remaining > 0 ? '<br><small class="text-danger">Rem: '+escHtml(fmt.currency(p.remaining))+'</small>' : '') + '</td>' +
-                    '<td>' + escHtml(getProfileName(p.paidBy)) + '</td>' +
-                    '<td><span class="badge badge-default">' + escHtml(methodLabel(p.method)) + '</span></td>' +
-                    '<td>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '<span class="text-muted">—</span>') + '</td>' +
-                    '<td>' + (p.reference ? escHtml(p.reference) : '<span class="text-muted">—</span>') + '</td>' +
-                    '<td>' + statusBadge(p.status) + '</td>' +
-                    '<td class="actions-col"><button class="btn btn-outline btn-sm" data-report-detail="' + escHtml(p.id) + '">Details</button></td>' +
+            '</div>' +
+            '<div class="card">' +
+              '<div class="card-header"><h2>' + escHtml(t('rep.bytype')) + '</h2></div>' +
+              '<div class="card-body">' +
+                (typeEntries.length === 0 ? '<p class="text-muted">' + escHtml(t('rep.nodata')) + '</p>' :
+                  typeEntries.map(function(me){
+                    var pct = totalAll > 0 ? Math.round(me[1]/totalAll*100) : 0;
+                    return '<div class="report-row">' +
+                      '<span class="label">' + escHtml(methodLabel(me[0])) + '</span>' +
+                      '<span class="value">' + escHtml(fmt.currency(me[1])) + ' <small class="text-muted">('+pct+'%)</small></span>' +
+                    '</div>';
+                  }).join('')) +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="card mb-3">' +
+            '<div class="card-header"><h2>' + escHtml(t('rep.bydate')) + '</h2></div>' +
+            groupedDates.map(function(date){
+              var group = grouped[date];
+              var groupTotal = group.reduce(function(s,a){ return s+Number(a.paymentAmount||0); }, 0);
+              return '<div class="report-date-group">' +
+                '<div class="report-date-header">' +
+                  '<span>' + escHtml(fmt.date(date)) + '</span>' +
+                  '<span class="report-date-total">' + escHtml(fmt.currency(groupTotal)) + '</span>' +
+                '</div>' +
+                '<div class="data-table-wrap"><table class="data-table"><tbody>' +
+                group.map(function(a){
+                  return '<tr>' +
+                    '<td><strong>' + escHtml(a.title) + '</strong></td>' +
+                    '<td><span class="badge badge-info">' + escHtml(t('cat.'+a.category)) + '</span></td>' +
+                    '<td>' + statusBadge(a.status) + '</td>' +
+                    '<td><strong>' + escHtml(fmt.currency(a.paymentAmount||0)) + '</strong>' +
+                      (Number(a.remaining)>0 ? '<br><small class="text-danger">'+escHtml(t('act.col.remaining'))+': '+escHtml(fmt.currency(a.remaining))+'</small>' : '') +
+                    '</td>' +
+                    '<td><span class="badge badge-default">' + escHtml(methodLabel(a.paymentType)) + '</span></td>' +
                   '</tr>';
                 }).join('') +
                 '</tbody></table></div>' +
-            '</div>';
-          }).join('') +
-        '</div>');
-
-      /* Drill-down detail modal */
-      content.querySelectorAll('[data-report-detail]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var payId = btn.getAttribute('data-report-detail');
-          var p = DB.getPaymentById(payId);
-          if (!p) return;
-          openPaymentDetailModal(p);
-        });
-      });
+              '</div>';
+            }).join('') +
+          '</div>');
     }
 
     rebuildReportContent();
 
-    /* Wire up filters */
-    var filterIds = ['rep-search','rep-date-from','rep-date-to','rep-cat-filter','rep-payer-filter','rep-method-filter','rep-status-filter','rep-act-filter'];
-    var filterKeys = ['search','dateFrom','dateTo','category','payer','method','status','activityId'];
+    var filterIds  = ['rep-search','rep-date-from','rep-date-to','rep-cat-filter','rep-status-filter'];
+    var filterKeys = ['search','dateFrom','dateTo','category','status'];
     filterIds.forEach(function(fid, i) {
       var el = container.querySelector('#' + fid);
       if (!el) return;
-      el.addEventListener('input', function(e) { reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
-      el.addEventListener('change', function(e) { reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
+      el.addEventListener('input',  function(e){ reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
+      el.addEventListener('change', function(e){ reportFilter[filterKeys[i]] = e.target.value; rebuildReportContent(); });
     });
     container.querySelector('#rep-reset-filters').addEventListener('click', function() {
-      reportFilter = { dateFrom:'', dateTo:'', category:'', payer:'', method:'', status:'', activityId:'', search:'' };
+      reportFilter = { dateFrom:'', dateTo:'', category:'', status:'', search:'' };
       navigate('reports');
     });
     container.querySelector('#btn-print').addEventListener('click', function() { window.print(); });
-  }
-
-  function openPaymentDetailModal(p) {
-    var overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML =
-      '<div class="modal" role="dialog" aria-modal="true" aria-label="Payment Details">' +
-        '<div class="modal-header">' +
-          '<h2>Payment Details</h2>' +
-          '<button class="btn btn-ghost btn-icon" id="detail-close" aria-label="Close">✕</button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-          '<dl class="detail-grid">' +
-            '<dt>Amount</dt><dd><strong>' + escHtml(fmt.currency(p.amount)) + '</strong></dd>' +
-            '<dt>Date</dt><dd>' + escHtml(fmt.date(p.date)) + '</dd>' +
-            '<dt>Status</dt><dd>' + statusBadge(p.status) + '</dd>' +
-            '<dt>Paid By</dt><dd>' + escHtml(getProfileName(p.paidBy)) + '</dd>' +
-            '<dt>Method</dt><dd>' + escHtml(methodLabel(p.method)) + '</dd>' +
-            '<dt>Activity</dt><dd>' + (p.activityId ? escHtml(getActivityTitle(p.activityId)) : '<span class="text-muted">—</span>') + '</dd>' +
-            '<dt>Reference</dt><dd>' + (p.reference ? escHtml(p.reference) : '<span class="text-muted">—</span>') + '</dd>' +
-            '<dt>Remaining</dt><dd>' + escHtml(fmt.currency(p.remaining||0)) + '</dd>' +
-            (p.notes ? '<dt>Notes</dt><dd>' + escHtml(p.notes) + '</dd>' : '') +
-            '<dt>Created</dt><dd>' + escHtml(fmt.datetime(p.createdAt)) + '</dd>' +
-            '<dt>Updated</dt><dd>' + escHtml(fmt.datetime(p.updatedAt)) + '</dd>' +
-          '</dl>' +
-        '</div>' +
-        '<div class="modal-footer">' +
-          '<button class="btn btn-ghost" id="detail-done">Close</button>' +
-        '</div>' +
-      '</div>';
-    document.body.appendChild(overlay);
-    function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
-    overlay.querySelector('#detail-close').addEventListener('click', close);
-    overlay.querySelector('#detail-done').addEventListener('click', close);
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
   }
 
   /* ── AUDIT LOG ───────────────────────────────────────────── */
@@ -1121,31 +1167,30 @@
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Audit Log</h1><p>Complete history of all changes</p></div>' +
+          '<div><h1>' + escHtml(t('aud.title')) + '</h1><p>' + escHtml(t('aud.subtitle')) + '</p></div>' +
           '<div class="page-actions">' +
-            '<button class="btn btn-danger btn-sm" id="btn-clear-log">Clear Log</button>' +
+            '<button class="btn btn-danger btn-sm" id="btn-clear-log">' + escHtml(t('aud.clearlog')) + '</button>' +
           '</div>' +
         '</div>' +
 
-        /* Filter bar */
         '<div class="filter-bar">' +
           '<input type="date" id="aud-date-from" class="filter-date" title="From date" value="' + escHtml(auditFilter.dateFrom) + '">' +
           '<input type="date" id="aud-date-to"   class="filter-date" title="To date"   value="' + escHtml(auditFilter.dateTo) + '">' +
           '<select id="aud-user-filter">' +
-            '<option value="">All Users</option>' +
+            '<option value="">' + escHtml(t('aud.allusers')) + '</option>' +
             profs.map(function(p){ return '<option value="'+escHtml(p.id)+'"'+(auditFilter.userId===p.id?' selected':'')+'>'+escHtml(p.name)+'</option>'; }).join('') +
           '</select>' +
           '<select id="aud-action-filter">' +
-            '<option value="">All Actions</option>' +
+            '<option value="">' + escHtml(t('aud.allactions')) + '</option>' +
             ['create','update','delete','login','logout']
               .map(function(a){ return '<option value="'+a+'"'+(auditFilter.action===a?' selected':'')+'>'+a.charAt(0).toUpperCase()+a.slice(1)+'</option>'; }).join('') +
           '</select>' +
           '<select id="aud-entity-filter">' +
-            '<option value="">All Entities</option>' +
+            '<option value="">' + escHtml(t('aud.allentities')) + '</option>' +
             ['Activity','Payment','Profile']
               .map(function(e){ return '<option value="'+e+'"'+(auditFilter.entity===e?' selected':'')+'>'+e+'</option>'; }).join('') +
           '</select>' +
-          '<button class="btn btn-ghost btn-sm" id="aud-reset-filters">Reset</button>' +
+          '<button class="btn btn-ghost btn-sm" id="aud-reset-filters">' + escHtml(t('aud.reset')) + '</button>' +
         '</div>' +
 
         '<div id="audit-log-content"></div>' +
@@ -1154,10 +1199,10 @@
     renderAuditLogContent(container.querySelector('#audit-log-content'));
 
     container.querySelector('#btn-clear-log').addEventListener('click', function () {
-      if (confirm('Clear the entire audit log? This cannot be undone.')) {
+      if (confirm(t('aud.confirmclear'))) {
         DB.clearAuditLog();
         renderAuditLogContent(container.querySelector('#audit-log-content'));
-        toast('Audit log cleared', 'warning');
+        toast(t('aud.cleared'), 'warning');
       }
     });
 
@@ -1188,7 +1233,7 @@
     });
 
     if (!log.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📜</div><h3>No audit entries found</h3><p>Actions like creating or editing records will appear here.</p></div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📜</div><h3>' + escHtml(t('aud.empty')) + '</h3><p>' + escHtml(t('aud.emptysub')) + '</p></div>';
       return;
     }
 
@@ -1213,7 +1258,7 @@
                 '</div>' +
                 '<div class="audit-time">' +
                   escHtml(fmt.datetime(entry.ts)) +
-                  (hasSnapshots ? '<br><button class="btn btn-ghost btn-sm audit-detail-btn" data-audit-id="' + escHtml(entry.id) + '" style="margin-top:.3rem;font-size:.75rem">View Changes</button>' : '') +
+                  (hasSnapshots ? '<br><button class="btn btn-ghost btn-sm audit-detail-btn" data-audit-id="' + escHtml(entry.id) + '" style="margin-top:.3rem;font-size:.75rem">' + escHtml(t('aud.viewchanges')) + '</button>' : '') +
                 '</div>' +
               '</div>';
             }).join('') +
@@ -1232,7 +1277,7 @@
 
   function openAuditDetailModal(entry) {
     function snapshotToHtml(snapshot) {
-      if (!snapshot) return '<em class="text-muted">—</em>';
+      if (!snapshot) return '<em class="text-muted">\u2014</em>';
       var keys = Object.keys(snapshot);
       return '<dl class="detail-grid">' +
         keys.map(function(k) {
@@ -1252,8 +1297,8 @@
         diffs.map(function(k){
           return '<tr>' +
             '<td><strong>' + escHtml(k) + '</strong></td>' +
-            '<td class="text-danger">' + escHtml(String(prev[k]||'—')) + '</td>' +
-            '<td class="text-success">' + escHtml(String(next[k]||'—')) + '</td>' +
+            '<td class="text-danger">' + escHtml(String(prev[k]||'\u2014')) + '</td>' +
+            '<td class="text-success">' + escHtml(String(next[k]||'\u2014')) + '</td>' +
           '</tr>';
         }).join('') +
       '</tbody></table>';
@@ -1262,11 +1307,12 @@
     var hasBoth = entry.prevSnapshot && entry.newSnapshot;
     var overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
+    var detailTitle = t('aud.changes');
     overlay.innerHTML =
-      '<div class="modal" role="dialog" aria-modal="true" aria-label="Audit Entry Details">' +
+      '<div class="modal" role="dialog" aria-modal="true" aria-label="' + escHtml(detailTitle) + '">' +
         '<div class="modal-header">' +
-          '<h2>Change Details</h2>' +
-          '<button class="btn btn-ghost btn-icon" id="aud-detail-close" aria-label="Close">✕</button>' +
+          '<h2>' + escHtml(detailTitle) + '</h2>' +
+          '<button class="btn btn-ghost btn-icon" id="aud-detail-close" aria-label="Close">\u2715</button>' +
         '</div>' +
         '<div class="modal-body">' +
           '<div class="audit-meta-row">' +
@@ -1284,7 +1330,7 @@
               '<h3 style="font-size:.9rem;font-weight:700;margin-bottom:.5rem;">Created Record</h3>' + snapshotToHtml(entry.newSnapshot) : '')) +
         '</div>' +
         '<div class="modal-footer">' +
-          '<button class="btn btn-ghost" id="aud-detail-done">Close</button>' +
+          '<button class="btn btn-ghost" id="aud-detail-done">' + escHtml(t('common.close')) + '</button>' +
         '</div>' +
       '</div>';
 
@@ -1300,72 +1346,68 @@
     container.innerHTML =
       '<div class="page-inner">' +
         '<div class="page-header">' +
-          '<div><h1>Settings</h1><p>Manage your data and app preferences</p></div>' +
+          '<div><h1>' + escHtml(t('set.title')) + '</h1><p>' + escHtml(t('set.subtitle')) + '</p></div>' +
         '</div>' +
 
-        /* Data Management */
         '<div class="settings-section">' +
-          '<h2 class="settings-section-title">Data Management</h2>' +
+          '<h2 class="settings-section-title">' + escHtml(t('set.datamgmt')) + '</h2>' +
           '<div class="settings-cards">' +
 
             '<div class="settings-card">' +
               '<div class="settings-card-icon">📤</div>' +
               '<div class="settings-card-body">' +
-                '<div class="settings-card-title">Export Data</div>' +
-                '<div class="settings-card-desc">Download all your data (activities, payments, audit log) as a JSON file for backup or transfer.</div>' +
-                '<button class="btn btn-outline btn-sm mt-2" id="btn-export">Export as JSON</button>' +
+                '<div class="settings-card-title">' + escHtml(t('set.export')) + '</div>' +
+                '<div class="settings-card-desc">' + escHtml(t('set.exportdesc')) + '</div>' +
+                '<button class="btn btn-outline btn-sm mt-2" id="btn-export">' + escHtml(t('set.exportbtn')) + '</button>' +
               '</div>' +
             '</div>' +
 
             '<div class="settings-card">' +
               '<div class="settings-card-icon">📥</div>' +
               '<div class="settings-card-body">' +
-                '<div class="settings-card-title">Import Data</div>' +
-                '<div class="settings-card-desc">Import data from a previously exported JSON file. This will <strong>overwrite</strong> the matching data.</div>' +
+                '<div class="settings-card-title">' + escHtml(t('set.import')) + '</div>' +
+                '<div class="settings-card-desc">' + t('set.importdesc') + '</div>' +
                 '<label class="btn btn-outline btn-sm mt-2" style="cursor:pointer">' +
-                  'Import from JSON<input type="file" id="import-file" accept=".json" style="display:none">' +
+                  escHtml(t('set.importbtn')) + '<input type="file" id="import-file" accept=".json" style="display:none">' +
                 '</label>' +
               '</div>' +
             '</div>' +
 
             '<div class="settings-card settings-card-danger">' +
-              '<div class="settings-card-icon">⚠️</div>' +
+              '<div class="settings-card-icon">\u26a0\ufe0f</div>' +
               '<div class="settings-card-body">' +
-                '<div class="settings-card-title">Reset App Data</div>' +
-                '<div class="settings-card-desc">Remove all your data and restore the original demo data. This <strong>cannot be undone</strong>.</div>' +
-                '<button class="btn btn-danger btn-sm mt-2" id="btn-reset">Reset to Demo Data</button>' +
+                '<div class="settings-card-title">' + escHtml(t('set.reset')) + '</div>' +
+                '<div class="settings-card-desc">' + t('set.resetdesc') + '</div>' +
+                '<button class="btn btn-danger btn-sm mt-2" id="btn-reset">' + escHtml(t('set.resetbtn')) + '</button>' +
               '</div>' +
             '</div>' +
 
           '</div>' +
         '</div>' +
 
-        /* App Info */
         '<div class="settings-section">' +
-          '<h2 class="settings-section-title">App Information</h2>' +
+          '<h2 class="settings-section-title">' + escHtml(t('set.appinfo')) + '</h2>' +
           '<div class="card">' +
             '<div class="card-body">' +
               '<dl class="detail-grid">' +
-                '<dt>App Name</dt><dd><strong>ICO Renovation Reporting</strong></dd>' +
-                '<dt>Version</dt><dd>' + escHtml(APP_VERSION) + ' (Phase 2)</dd>' +
-                '<dt>Storage</dt><dd>Local (browser localStorage)</dd>' +
-                '<dt>Activities</dt><dd>' + DB.getActivities().length + ' records</dd>' +
-                '<dt>Payments</dt><dd>' + DB.getPayments().length + ' records</dd>' +
-                '<dt>Audit Entries</dt><dd>' + DB.getAuditLog().length + ' entries</dd>' +
+                '<dt>App Name</dt><dd><strong>' + escHtml(t('set.appname')) + '</strong></dd>' +
+                '<dt>' + escHtml(t('set.version')) + '</dt><dd>' + escHtml(APP_VERSION) + '</dd>' +
+                '<dt>' + escHtml(t('set.storage')) + '</dt><dd>' + escHtml(t('set.storageval')) + '</dd>' +
+                '<dt>' + escHtml(t('set.activities')) + '</dt><dd>' + DB.getActivities().length + ' ' + escHtml(t('set.records')) + '</dd>' +
+                '<dt>' + escHtml(t('set.auditentries')) + '</dt><dd>' + DB.getAuditLog().length + ' ' + escHtml(t('set.entries')) + '</dd>' +
               '</dl>' +
             '</div>' +
           '</div>' +
         '</div>' +
 
-        /* Cloud Sync Placeholder */
         '<div class="settings-section">' +
-          '<h2 class="settings-section-title">Cloud Sync <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span></h2>' +
+          '<h2 class="settings-section-title">' + escHtml(t('set.cloudsync')) + ' <span class="badge badge-accent" style="vertical-align:middle">Coming Soon</span></h2>' +
           '<div class="card">' +
             '<div class="card-body">' +
               '<div class="empty-state" style="padding:1.5rem">' +
-                '<div class="empty-icon">☁️</div>' +
+                '<div class="empty-icon">\u2601\ufe0f</div>' +
                 '<h3>Supabase Integration</h3>' +
-                '<p>Cloud sync and multi-device access will be available in a future update. Your data is safely stored locally for now.</p>' +
+                '<p>' + escHtml(t('set.clouddesc')) + '</p>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -1373,7 +1415,6 @@
 
       '</div>';
 
-    /* Export */
     container.querySelector('#btn-export').addEventListener('click', function() {
       var data = DB.exportAllData();
       var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1383,10 +1424,9 @@
       a.download = 'ico-data-' + new Date().toISOString().slice(0, 10) + '.json';
       a.click();
       URL.revokeObjectURL(url);
-      toast('Data exported successfully', 'success');
+      toast(t('set.exported'), 'success');
     });
 
-    /* Import */
     container.querySelector('#import-file').addEventListener('change', function(e) {
       var file = e.target.files[0];
       if (!file) return;
@@ -1395,21 +1435,20 @@
         try {
           var data = JSON.parse(ev.target.result);
           DB.importAllData(data);
-          toast('Data imported successfully. Refreshing…', 'success');
+          toast(t('set.imported'), 'success');
           setTimeout(function() { navigate('dashboard'); }, 1000);
         } catch (err) {
-          toast('Import failed: invalid JSON file', 'danger');
+          toast(t('set.importfail'), 'danger');
         }
       };
       reader.readAsText(file);
       e.target.value = '';
     });
 
-    /* Reset */
     container.querySelector('#btn-reset').addEventListener('click', function() {
-      if (confirm('Reset ALL data to the original demo data? This cannot be undone.')) {
+      if (confirm(t('set.confirmreset'))) {
         DB.resetAllData();
-        toast('App data has been reset to demo data', 'warning');
+        toast(t('set.resetdone'), 'warning');
         setTimeout(function() { navigate('dashboard'); }, 800);
       }
     });
@@ -1417,6 +1456,12 @@
 
   /* ── Bootstrap ───────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
+    // Restore persisted language
+    try {
+      var savedLang = localStorage.getItem('ico_lang');
+      if (savedLang && TRANSLATIONS[savedLang]) state.lang = savedLang;
+    } catch (e) { /* ignore */ }
+
     initProfileForm();
 
     runSplash(function () {
