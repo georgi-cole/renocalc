@@ -7,7 +7,7 @@
   var DB  = ICO.DB;
   var fmt = ICO.fmt;
 
-  var APP_VERSION = '2.0.0';
+  var APP_VERSION = (ICO.Config || {}).APP_VERSION || '3.0.0';
 
   /* ── State ────────────────────────────────────────────────── */
   var state = {
@@ -1347,7 +1347,7 @@
             '<div class="card-body">' +
               '<dl class="detail-grid">' +
                 '<dt>App Name</dt><dd><strong>ICO Renovation Reporting</strong></dd>' +
-                '<dt>Version</dt><dd>' + escHtml(APP_VERSION) + ' (Phase 2)</dd>' +
+                '<dt>Version</dt><dd>' + escHtml(APP_VERSION) + ' (Phase 3)</dd>' +
                 '<dt>Storage</dt><dd>Local (browser localStorage)</dd>' +
                 '<dt>Activities</dt><dd>' + DB.getActivities().length + ' records</dd>' +
                 '<dt>Payments</dt><dd>' + DB.getPayments().length + ' records</dd>' +
