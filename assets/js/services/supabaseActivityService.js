@@ -227,14 +227,40 @@
     /**
      * Clear all activities in Supabase and reset the cache
      * (used by ReportService.resetAll).
+     *
+     * Also re-seeds the original activities when available, to match the
+     * behavior of the local ActivityService implementation.
      */
     _reset: function () {
       _cache = [];
-      sb.from(TABLE).delete().neq('id', '').then(function (res) {
+
+      // First, delete all existing rows in Supabase.
+      var resetPromise = sb.from(TABLE).delete().neq('id', '').then(function (res) {
         if (res.error) {
           console.error('[ICO:ActivityService] Reset delete error:', res.error.message);
         }
       });
+
+      // If seed activities are defined, re-insert them so the app is restored
+      // to its original seeded state after a reset.
+      if (Array.isArray(ICO.SEED_ACTIVITIES) && ICO.SEED_ACTIVITIES.length) {
+        resetPromise = resetPromise.then(function () {
+          var seedList = ICO.SEED_ACTIVITIES.slice();
+          var rows = seedList.map(_toRow);
+
+          _cache = seedList;
+
+          return sb.from(TABLE).upsert(rows).then(function (res) {
+            if (res.error) {
+              console.error('[ICO:ActivityService] Reset seed upsert error:', res.error.message);
+            } else {
+              console.info('[ICO:ActivityService] Reset re-seeded ' + seedList.length + ' activities.');
+            }
+          });
+        });
+      }
+
+      return resetPromise;
     }
   };
 
