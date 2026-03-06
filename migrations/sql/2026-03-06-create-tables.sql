@@ -49,8 +49,8 @@ CREATE POLICY "profiles_insert_authenticated"
 CREATE POLICY "profiles_update_own"
   ON profiles FOR UPDATE
   TO authenticated
-  USING (true)
-  WITH CHECK (true);
+  USING (auth.uid()::TEXT = id)
+  WITH CHECK (auth.uid()::TEXT = id);
 
 
 -- ---------------------------------------------------------------------------
